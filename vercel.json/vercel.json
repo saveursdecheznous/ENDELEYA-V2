@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/vitrine/:slug",
+      "destination": "/vitrine.html?slug=:slug"
+    }
+  ]
+}
