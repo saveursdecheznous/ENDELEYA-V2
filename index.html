@@ -370,9 +370,7 @@ Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aid
 </form></div>
 </section>
 
-</main></div></div>
-
-<script>
+</main></div></div><script>
 /* CONFIGURATION SUPABASE */
 const SUPABASE_URL="https://omwdabkrnkpyxhsohtol.supabase.co";
 const SUPABASE_KEY="sb_publishable_G0cficld3B6oVyeE6_rSLQ_MG-fpXZG";
@@ -525,9 +523,7 @@ $("profile-form").addEventListener("submit",async event=>{
   message("profile-message","Ton profil a été enregistré.","success");await loadProfile();
  }catch(error){message("profile-message",error.message,"error");}
  finally{button.disabled=false;}
-});
-
-/* ENTREPRISES */
+});/* ENTREPRISES */
 async function loadBusinesses(){
  if(!currentUser)return;
  const list=$("business-list");list.textContent="Chargement...";
@@ -535,27 +531,80 @@ async function loadBusinesses(){
  if(error){list.textContent="Impossible de charger les entreprises : "+error.message;return;}
  businesses=data||[];$("business-count").textContent=businesses.length;renderBusinesses();updateBusinessSelect();updateElsaBusinessSelect();
 }
+
+/* PUBLICATION ET DÉPUBLICATION D'UNE VITRINE */
+async function toggleBusinessPublication(id){
+ const business=businesses.find(item=>item.id===id);
+ if(!business)return;
+
+ const nextStatus=business.status==="published"?"draft":"published";
+ const action=nextStatus==="published"?"publier":"dépublier";
+
+ if(!confirm(`Veux-tu vraiment ${action} la vitrine « ${business.name} » ?`))return;
+
+ const {error}=await db.from("businesses")
+  .update({status:nextStatus})
+  .eq("id",id)
+  .eq("owner_id",currentUser.id);
+
+ if(error){
+  alert("Impossible de modifier la publication : "+error.message);
+  return;
+ }
+
+ await loadBusinesses();
+ await loadOffers();
+}
+
 function renderBusinesses(){
  const list=$("business-list");
- if(!businesses.length){list.innerHTML='<div class="empty">Tu n’as pas encore enregistré d’entreprise. Crée ta première vitrine ci-dessus.</div>';return;}
- list.innerHTML=businesses.map(b=>`
- <div class="data-item" style="align-items:flex-start">
- <div style="flex:1;min-width:180px">
- <strong>${escapeHTML(b.name)}</strong>
- <div class="small-note">${escapeHTML(b.category||"Activité")} · ${escapeHTML(b.city||"")} ${escapeHTML(b.province||"")}</div>
- <span class="pill">${escapeHTML(b.status||"draft")}</span>
- ${b.logo_url?`<div><p class="small-note">Logo</p><img class="photo-thumb" src="${escapeHTML(b.logo_url)}" alt="Logo"></div>`:""}
- ${b.cover_url?`<div><p class="small-note">Couverture</p><img class="photo-preview" src="${escapeHTML(b.cover_url)}" alt="Couverture"></div>`:""}
- ${renderGallery(b.gallery_urls)}
- </div>
- <div class="photo-tools" style="min-width:220px;flex:1">
- <strong>📷 Photos de l'entreprise</strong><br>
- <label class="upload-label">Ajouter un logo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="businessPhoto(this,'${b.id}','logo_url')"></label>
- <label class="upload-label">Photo de couverture<input type="file" accept="image/jpeg,image/png,image/webp" onchange="businessPhoto(this,'${b.id}','cover_url')"></label>
- <label class="upload-label">Galerie de photos<input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="businessGallery(this,'${b.id}')"></label>
- <div class="photo-status" id="business-photo-status-${b.id}">Images JPG, PNG ou WebP · 5 Mo maximum par image.</div>
- </div></div>`).join("");
+
+ if(!businesses.length){
+  list.innerHTML='<div class="empty">Tu n’as pas encore enregistré d’entreprise. Crée ta première vitrine ci-dessus.</div>';
+  return;
+ }
+
+ list.innerHTML=businesses.map(b=>{
+  const published=b.status==="published";
+  const publicUrl="/vitrine/"+encodeURIComponent(b.slug||"");
+
+  return `
+  <div class="data-item" style="align-items:flex-start">
+   <div style="flex:1;min-width:180px">
+    <strong>${escapeHTML(b.name)}</strong>
+    <div class="small-note">${escapeHTML(b.category||"Activité")} · ${escapeHTML(b.city||"")} ${escapeHTML(b.province||"")}</div>
+    <span class="pill">${published?"Vitrine publiée":"Brouillon"}</span>
+
+    ${published?`
+     <p class="small-note">
+      <a href="${publicUrl}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:700">
+       Voir ma vitrine publique ↗
+      </a>
+     </p>
+    `:""}
+
+    ${b.logo_url?`<div><p class="small-note">Logo</p><img class="photo-thumb" src="${escapeHTML(b.logo_url)}" alt="Logo"></div>`:""}
+    ${b.cover_url?`<div><p class="small-note">Couverture</p><img class="photo-preview" src="${escapeHTML(b.cover_url)}" alt="Couverture"></div>`:""}
+    ${renderGallery(b.gallery_urls)}
+
+    <div class="row-actions">
+     <button class="btn ${published?"btn-red":"btn-blue"}" type="button" onclick="toggleBusinessPublication('${b.id}')">
+      ${published?"Dépublier ma vitrine":"Publier ma vitrine"}
+     </button>
+    </div>
+   </div>
+
+   <div class="photo-tools" style="min-width:220px;flex:1">
+    <strong>📷 Photos de l'entreprise</strong><br>
+    <label class="upload-label">Ajouter un logo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="businessPhoto(this,'${b.id}','logo_url')"></label>
+    <label class="upload-label">Photo de couverture<input type="file" accept="image/jpeg,image/png,image/webp" onchange="businessPhoto(this,'${b.id}','cover_url')"></label>
+    <label class="upload-label">Galerie de photos<input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="businessGallery(this,'${b.id}')"></label>
+    <div class="photo-status" id="business-photo-status-${b.id}">Images JPG, PNG ou WebP · 5 Mo maximum par image.</div>
+   </div>
+  </div>`;
+ }).join("");
 }
+
 async function businessPhoto(input,businessId,column){
  const file=input.files[0];if(!file)return;
  const status=$("business-photo-status-"+businessId);status.textContent="Téléchargement...";
@@ -567,6 +616,7 @@ async function businessPhoto(input,businessId,column){
  }catch(error){status.textContent="Erreur : "+error.message;}
  finally{input.value="";}
 }
+
 async function businessGallery(input,businessId){
  const files=Array.from(input.files||[]);if(!files.length)return;
  const status=$("business-photo-status-"+businessId);status.textContent="Téléchargement de la galerie...";
@@ -580,6 +630,7 @@ async function businessGallery(input,businessId){
  }catch(error){status.textContent="Erreur : "+error.message;}
  finally{input.value="";}
 }
+
 $("business-form").addEventListener("submit",async event=>{
  event.preventDefault();const button=$("business-submit");button.disabled=true;message("business-message","Enregistrement de ton entreprise...");
  try{
@@ -594,7 +645,7 @@ $("business-form").addEventListener("submit",async event=>{
 /* SELECTEUR ENTREPRISE POUR LES OFFRES */
 function updateBusinessSelect(){
  const select=$("offer-business"),previous=select.value;
- select.innerHTML='<option value="">Choisir une entreprise</option>'+businesses.map(b=>`<option value="${escapeHTML(b.id)}">${escapeHTML(b.name)}</option>`).join("");
+ select.innerHTML='<option value="">Choisir une entreprise</option>'+businesses.map(b=>`<option value="${escapeHTML(b.id)}">${escapeHTML(b.name)}${b.status==="published"?" — publiée":" — brouillon"}</option>`).join("");
  if(businesses.some(b=>b.id===previous))select.value=previous;
 }
 
@@ -602,34 +653,98 @@ function updateBusinessSelect(){
 async function loadOffers(){
  if(!currentUser)return;
  const list=$("offer-list"),ids=businesses.map(b=>b.id);
- if(!ids.length){offers=[];$("offer-count").textContent="0";list.innerHTML='<div class="empty">Crée d’abord une entreprise pour pouvoir enregistrer des offres.</div>';return;}
+
+ if(!ids.length){
+  offers=[];$("offer-count").textContent="0";
+  list.innerHTML='<div class="empty">Crée d’abord une entreprise pour pouvoir enregistrer des offres.</div>';
+  return;
+ }
+
  list.textContent="Chargement...";
  const {data,error}=await db.from("offers").select("id,business_id,offer_type,name,description,price,currency,status,availability,created_at,image_url,gallery_urls").in("business_id",ids).order("created_at",{ascending:false});
+
  if(error){list.textContent="Impossible de charger les offres : "+error.message;return;}
+
  offers=data||[];$("offer-count").textContent=offers.length;renderOffers();
 }
+
+/* PUBLICATION ET DÉPUBLICATION D'UNE OFFRE */
+async function toggleOfferPublication(id){
+ const offer=offers.find(item=>item.id===id);
+ if(!offer)return;
+
+ const company=businesses.find(b=>b.id===offer.business_id);
+
+ if(!company){
+  alert("Entreprise introuvable.");
+  return;
+ }
+
+ if(company.status!=="published"){
+  alert("Publie d'abord la vitrine de cette entreprise avant de publier ses offres.");
+  return;
+ }
+
+ const nextStatus=offer.status==="published"?"draft":"published";
+ const action=nextStatus==="published"?"publier":"dépublier";
+
+ if(!confirm(`Veux-tu vraiment ${action} l'offre « ${offer.name} » ?`))return;
+
+ const {error}=await db.from("offers")
+  .update({status:nextStatus})
+  .eq("id",id)
+  .eq("business_id",company.id);
+
+ if(error){
+  alert("Impossible de modifier la publication : "+error.message);
+  return;
+ }
+
+ await loadOffers();
+}
+
 function renderOffers(){
  const list=$("offer-list");
- if(!offers.length){list.innerHTML='<div class="empty">Aucune offre enregistrée pour le moment.</div>';return;}
+
+ if(!offers.length){
+  list.innerHTML='<div class="empty">Aucune offre enregistrée pour le moment.</div>';
+  return;
+ }
+
  list.innerHTML=offers.map(o=>{
   const company=businesses.find(b=>b.id===o.business_id);
   const price=o.price===null?"Prix à préciser":Number(o.price).toLocaleString("fr-FR")+" "+(o.currency||"CDF");
+  const companyPublished=company?.status==="published";
+  const offerPublished=o.status==="published";
+
   return `<div class="data-item" style="align-items:flex-start">
   <div style="flex:1;min-width:180px">
-  <strong>${escapeHTML(o.name)}</strong>
-  <div class="small-note">${o.offer_type==="service"?"Service":"Produit"} · ${escapeHTML(company?.name||"")} · ${escapeHTML(price)}</div>
-  <span class="pill">${escapeHTML(o.status||"draft")}</span>
-  ${o.image_url?`<div><img class="photo-preview" src="${escapeHTML(o.image_url)}" alt="${escapeHTML(o.name)}"></div>`:""}
-  ${renderGallery(o.gallery_urls)}
+   <strong>${escapeHTML(o.name)}</strong>
+   <div class="small-note">${o.offer_type==="service"?"Service":"Produit"} · ${escapeHTML(company?.name||"")} · ${escapeHTML(price)}</div>
+   <span class="pill">${offerPublished?"Offre publiée":"Brouillon"}</span>
+
+   ${!companyPublished?'<p class="small-note" style="color:var(--red)">Publie d’abord la vitrine de cette entreprise pour rendre cette offre visible.</p>':""}
+
+   ${o.image_url?`<div><img class="photo-preview" src="${escapeHTML(o.image_url)}" alt="${escapeHTML(o.name)}"></div>`:""}
+   ${renderGallery(o.gallery_urls)}
+
+   <div class="row-actions">
+    <button class="btn ${offerPublished?"btn-red":"btn-blue"}" type="button" onclick="toggleOfferPublication('${o.id}')" ${!companyPublished&&!offerPublished?"disabled":""}>
+     ${offerPublished?"Dépublier cette offre":"Publier cette offre"}
+    </button>
+   </div>
   </div>
+
   <div class="photo-tools" style="min-width:200px;flex:1">
-  <strong>📷 Photos de l'offre</strong><br>
-  <label class="upload-label">Ajouter une photo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="offerPhoto(this,'${o.id}','image_url')"></label>
-  <label class="upload-label">Ajouter à la galerie<input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="offerGallery(this,'${o.id}')"></label>
-  <div class="photo-status" id="offer-photo-status-${o.id}">5 Mo maximum par image.</div>
-  </div></div>`;
+   <strong>📷 Photos de l'offre</strong><br>
+   <label class="upload-label">Ajouter une photo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="offerPhoto(this,'${o.id}','image_url')"></label>
+   <label class="upload-label">Ajouter à la galerie<input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="offerGallery(this,'${o.id}')"></label>
+   <div class="photo-status" id="offer-photo-status-${o.id}">5 Mo maximum par image.</div>
+  </div>
+  </div>`;
  }).join("");
 }
+
 async function offerPhoto(input,offerId,column){
  const file=input.files[0];if(!file)return;
  const status=$("offer-photo-status-"+offerId);status.textContent="Téléchargement...";
@@ -641,6 +756,7 @@ async function offerPhoto(input,offerId,column){
  }catch(error){status.textContent="Erreur : "+error.message;}
  finally{input.value="";}
 }
+
 async function offerGallery(input,offerId){
  const files=Array.from(input.files||[]);if(!files.length)return;
  const status=$("offer-photo-status-"+offerId);status.textContent="Téléchargement de la galerie...";
@@ -654,19 +770,27 @@ async function offerGallery(input,offerId){
  }catch(error){status.textContent="Erreur : "+error.message;}
  finally{input.value="";}
 }
+
 $("offer-form").addEventListener("submit",async event=>{
  event.preventDefault();const button=$("offer-submit");button.disabled=true;message("offer-message","Enregistrement de l'offre...");
  try{
   const businessId=$("offer-business").value;
+
   if(!businesses.some(b=>b.id===businessId))throw new Error("Choisis une entreprise qui t'appartient.");
+
   const rawPrice=$("offer-price").value,name=$("offer-name").value.trim();
   let imageUrl=null,galleryUrls=[];
+
   const imageFile=$("offer-image").files[0];
   if(imageFile){message("offer-message","Téléchargement de la photo principale...");imageUrl=await uploadImage(imageFile,"offers");}
+
   const galleryFiles=$("offer-gallery").files;
   if(galleryFiles.length){message("offer-message","Téléchargement des autres photos...");galleryUrls=await uploadMany(galleryFiles,"offers");}
+
   const payload={business_id:businessId,offer_type:$("offer-type").value,name,slug:slugify(name)+"-"+Math.random().toString(36).slice(2,6),description:$("offer-description").value.trim(),price:rawPrice===""?null:Number(rawPrice),currency:$("offer-currency").value,status:"draft",availability:"available",image_url:imageUrl,gallery_urls:galleryUrls};
+
   const {error}=await db.from("offers").insert(payload);if(error)throw error;
+
   message("offer-message","Offre et photos enregistrées avec succès !","success");$("offer-form").reset();await loadOffers();
  }catch(error){message("offer-message",error.message,"error");}
  finally{button.disabled=false;}
