@@ -7,6 +7,7 @@
 <title>ENDELEYA – Avance. Développe. Réussis.</title>
 <meta name="description" content="La plateforme des entrepreneurs.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{--blue:#007FFF;--red:#CE1021;--yellow:#F7D116;--dark:#14243A;--muted:#68778B;--bg:#F4F7FC;--white:#fff;--border:#E5EAF1;--green:#168653}
 *{box-sizing:border-box}
@@ -26,6 +27,7 @@ a{color:inherit;text-decoration:none}
 .btn-red{background:var(--red);color:white}
 .btn-light{background:#EAF3FF;color:var(--blue)}
 .btn-white{background:white;color:var(--blue)}
+.btn-green{background:var(--green);color:white}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .hero{background:linear-gradient(115deg,#061C39E8,#073B72C9),url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85") center/cover;color:white;padding:100px 0 95px}
 .hero-content{max-width:690px}
@@ -104,8 +106,6 @@ footer p{color:#B8C8DC}
 .upload-label{display:inline-flex;align-items:center;gap:6px;background:#EAF3FF;color:var(--blue);padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin:4px 5px 4px 0}
 .upload-label input{display:none}
 .photo-status{font-size:12px;color:var(--muted);margin-top:6px}
-
-/* INTERFACE DE DISCUSSION ELSA */
 .elsa-intro{background:linear-gradient(115deg,#0067D9,#004A9E);color:white;padding:20px;border-radius:13px;margin-bottom:18px}
 .elsa-intro h3{margin:0 0 6px}
 .elsa-intro p{margin:0;color:#E4F1FF;font-size:14px}
@@ -120,6 +120,13 @@ footer p{color:#B8C8DC}
 .elsa-status.error{color:var(--red)}
 .elsa-status.success{color:var(--green)}
 .elsa-disclaimer{font-size:11px;color:var(--muted);margin-top:12px}
+.status-draft{background:#EEF2F7;color:#536174}
+.status-active{background:#E6F7EF;color:#168653}
+.status-paused{background:#FFF4D8;color:#956600}
+.table-wrap{overflow-x:auto}
+.simple-table{width:100%;border-collapse:collapse;font-size:13px;min-width:550px}
+.simple-table th,.simple-table td{padding:11px;text-align:left;border-bottom:1px solid var(--border)}
+.simple-table th{background:#F7F9FC;color:#536174}
 @media(max-width:850px){
 .grid{grid-template-columns:repeat(2,1fr)}
 .module-grid{grid-template-columns:repeat(2,1fr)}
@@ -130,7 +137,7 @@ footer p{color:#B8C8DC}
 .main-area{padding:18px}
 }
 @media(max-width:560px){
-.navlinks a{display:none}
+.navlinks{display:none}
 .hero{padding:70px 0}
 .section{padding:45px 0}
 .grid{grid-template-columns:1fr}
@@ -146,6 +153,7 @@ footer p{color:#B8C8DC}
 }
 </style>
 </head>
+
 <body>
 <div class="flagline"></div>
 
@@ -182,9 +190,9 @@ footer p{color:#B8C8DC}
 <div class="feature"><div class="emoji">👥</div><h3>Clients et contacts</h3><p>Centralise les informations utiles pour tes relations commerciales.</p></div>
 <div class="feature"><div class="emoji">💰</div><h3>Gestion des revenus</h3><p>Prépare le suivi de tes ventes, dépenses et performances.</p></div>
 <div class="feature"><div class="emoji">📣</div><h3>Marketing</h3><p>Structure tes actions pour faire connaître ton activité.</p></div>
+<div class="feature"><div class="emoji">📝</div><h3>Contenu</h3><p>Planifie tes idées et tes publications sur les réseaux sociaux.</p></div>
 <div class="feature"><div class="emoji">🤖</div><h3>ELSA</h3><p>Une assistante intelligente conçue pour accompagner les entrepreneurs.</p></div>
-</div>
-</div></section>
+</div></div></section>
 
 <section class="section" id="apropos" style="background:#EAF2FC"><div class="container">
 <div class="about"><h2>À propos d'ENDELEYA</h2>
@@ -251,18 +259,18 @@ footer p{color:#B8C8DC}
 <button class="back-btn mobile-menu" onclick="$('sidebar').classList.toggle('mobile-open')">☰ Menu</button></div>
 
 <section id="section-dashboard">
-<div class="welcome"><h2>Bienvenue sur ENDELEYA 👋</h2><p>Ton espace entrepreneur est prêt. Commence par présenter ton activité.</p></div>
+<div class="welcome"><h2>Bienvenue sur ENDELEYA 👋</h2><p>Ton espace entrepreneur est prêt. Avance chaque jour, même avec une petite action.</p></div>
 <div class="stats-grid">
 <div class="stat"><strong id="business-count">0</strong><span>Entreprise(s)</span></div>
 <div class="stat"><strong id="offer-count">0</strong><span>Offres enregistrées</span></div>
-<div class="stat"><strong>ELSA</strong><span>Assistante intelligente</span></div>
+<div class="stat"><strong id="contact-count">0</strong><span>Contacts</span></div>
 </div>
 <div class="panel"><h3>Que souhaites-tu faire aujourd'hui ?</h3><div class="module-grid">
 <button class="module-card" onclick="goToSection('business')"><span class="emoji">🏢</span><strong>Mon Business</strong><small>Créer ma vitrine</small></button>
 <button class="module-card" onclick="goToSection('offers')"><span class="emoji">🛍️</span><strong>Mes offres</strong><small>Ajouter un produit ou service</small></button>
-<button class="module-card" onclick="goToSection('customers')"><span class="emoji">👥</span><strong>Mes contacts</strong><small>Gestion des clients</small></button>
+<button class="module-card" onclick="goToSection('customers')"><span class="emoji">👥</span><strong>Mes contacts</strong><small>Gérer mes relations</small></button>
 <button class="module-card" onclick="goToSection('revenues')"><span class="emoji">💰</span><strong>Mes revenus</strong><small>Suivi financier</small></button>
-<button class="module-card" onclick="goToSection('marketing')"><span class="emoji">📣</span><strong>Marketing</strong><small>Développer ma visibilité</small></button>
+<button class="module-card" onclick="goToSection('marketing')"><span class="emoji">📣</span><strong>Marketing</strong><small>Suivre mes campagnes</small></button>
 <button class="module-card" onclick="goToSection('content')"><span class="emoji">📝</span><strong>Contenu</strong><small>Organiser mes publications</small></button>
 <button class="module-card" onclick="goToSection('elsa')"><span class="emoji">🤖</span><strong>ELSA</strong><small>Mon assistante IA</small></button>
 <button class="module-card" onclick="goToSection('profile')"><span class="emoji">👤</span><strong>Mon profil</strong><small>Mes informations</small></button>
@@ -291,7 +299,7 @@ footer p{color:#B8C8DC}
 <div class="form-message" id="business-message"></div>
 </form></div>
 <div class="panel"><h3>Mes entreprises</h3>
-<p class="small-note">Ajoute ou change le logo, la photo de couverture et les photos de présentation de chaque entreprise déjà enregistrée.</p>
+<p class="small-note">Ajoute le logo, la photo de couverture et les photos de présentation de chaque entreprise.</p>
 <div id="business-list" class="empty">Chargement...</div></div>
 </section>
 
@@ -307,53 +315,158 @@ footer p{color:#B8C8DC}
 <div class="field"><label>Prix</label><input id="offer-price" type="number" min="0" step="0.01"></div>
 <div class="field"><label>Devise</label><select id="offer-currency"><option value="CDF">Franc congolais (CDF)</option><option value="USD">Dollar américain (USD)</option></select></div></div>
 <div class="field"><label>Photo principale</label><input id="offer-image" type="file" accept="image/jpeg,image/png,image/webp"><div class="small-note">JPG, PNG ou WebP. Maximum 5 Mo.</div></div>
-<div class="field"><label>Autres photos (facultatif)</label><input id="offer-gallery" type="file" accept="image/jpeg,image/png,image/webp" multiple><div class="small-note">Tu peux sélectionner plusieurs images, 5 Mo maximum chacune.</div></div>
+<div class="field"><label>Autres photos (facultatif)</label><input id="offer-gallery" type="file" accept="image/jpeg,image/png,image/webp" multiple><div class="small-note">5 Mo maximum chacune.</div></div>
 <button class="btn btn-blue" id="offer-submit">Enregistrer l'offre</button>
 <div class="form-message" id="offer-message"></div>
 </form></div>
 <div class="panel"><h3>Mes produits et services</h3><div id="offer-list" class="empty">Chargement...</div></div>
 </section>
 
-<section id="section-customers" class="hidden"><div class="panel"><h3>Mes contacts</h3><p class="muted">Cet espace accueillera la gestion des clients, prospects et coordonnées commerciales.</p></div></section>
-<section id="section-revenues" class="hidden"><div class="panel"><h3>Mes revenus</h3><p class="muted">Le suivi des ventes, dépenses, recettes et résultats sera disponible ici.</p></div></section>
-<section id="section-marketing" class="hidden"><div class="panel"><h3>Marketing</h3><p class="muted">Cet espace accueillera tes campagnes, actions promotionnelles et stratégies commerciales.</p></div></section>
-<section id="section-content" class="hidden"><div class="panel"><h3>Mon contenu</h3><p class="muted">Tu pourras organiser tes idées, publications et calendriers de contenu ici.</p></div></section>
-
-<!-- ELSA : INTERFACE DE CONVERSATION -->
-<section id="section-elsa" class="hidden">
-  <div class="panel">
-    <div class="elsa-intro">
-      <h3>🤖 ELSA – Ton assistante entrepreneuriale</h3>
-      <p>Une intelligence conçue pour les réalités des entrepreneurs africains, avec la RDC comme priorité.</p>
-    </div>
-
-    <div class="field">
-      <label for="elsa-business">Entreprise concernée</label>
-      <select id="elsa-business">
-        <option value="">Conseils généraux</option>
-      </select>
-      <div class="small-note">Sélectionne l'entreprise sur laquelle tu souhaites travailler.</div>
-    </div>
-
-    <div id="elsa-chat-history" class="elsa-chat-history" aria-live="polite">
-      <div class="elsa-message assistant">Bonjour ! Je suis ELSA, ton assistante entrepreneuriale. 👋
-
-Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aider à trouver des solutions concrètes adaptées à ta réalité.</div>
-    </div>
-
-    <form id="elsa-chat-form" class="elsa-chat-form">
-      <div class="field">
-        <label for="elsa-chat-input">Ton message</label>
-        <textarea id="elsa-chat-input" rows="2" maxlength="5000" placeholder="Explique-moi ce dont tu as besoin..." required></textarea>
-      </div>
-      <button class="btn btn-blue" id="elsa-send" type="submit">Envoyer</button>
-    </form>
-
-    <div id="elsa-status" class="elsa-status" role="status"></div>
-    <p class="elsa-disclaimer">ELSA peut t'aider à réfléchir et à organiser ton activité. Vérifie les informations importantes concernant les prix, les lois et les démarches officielles.</p>
-  </div>
+<!-- MODULE CONTACTS -->
+<section id="section-customers" class="hidden">
+<div class="panel">
+<h3>Ajouter un contact</h3>
+<p class="muted">Centralise les informations de tes clients, prospects, fournisseurs et partenaires.</p>
+<form id="contact-form">
+<input type="hidden" id="contact-id">
+<div class="field"><label>Entreprise concernée *</label><select id="contact-business" required></select></div>
+<div class="two-col">
+<div class="field"><label>Nom complet *</label><input id="contact-name" required maxlength="150" placeholder="Nom du contact"></div>
+<div class="field"><label>Type de contact *</label><select id="contact-type" required>
+<option value="client">Client</option><option value="prospect">Prospect</option><option value="supplier">Fournisseur</option><option value="partner">Partenaire</option><option value="other">Autre</option>
+</select></div></div>
+<div class="two-col">
+<div class="field"><label>Téléphone</label><input id="contact-phone" placeholder="+243..."></div>
+<div class="field"><label>WhatsApp</label><input id="contact-whatsapp" placeholder="+243..."></div></div>
+<div class="two-col">
+<div class="field"><label>E-mail</label><input id="contact-email" type="email"></div>
+<div class="field"><label>Ville</label><input id="contact-city"></div></div>
+<div class="field"><label>Adresse</label><input id="contact-address"></div>
+<div class="field"><label>Notes</label><textarea id="contact-notes" rows="2" placeholder="Informations utiles sur ce contact..."></textarea></div>
+<div class="row-actions"><button class="btn btn-blue" id="contact-submit">Enregistrer le contact</button><button class="btn btn-light hidden" type="button" id="contact-cancel" onclick="resetContactForm()">Annuler la modification</button></div>
+<div class="form-message" id="contact-message"></div>
+</form>
+</div>
+<div class="panel"><h3>Mon répertoire</h3>
+<div class="field"><label>Filtrer par entreprise</label><select id="contact-filter" onchange="loadContacts()"><option value="">Toutes mes entreprises</option></select></div>
+<div id="contact-list" class="empty">Chargement...</div>
+</div>
 </section>
 
+<!-- MODULE REVENUS -->
+<section id="section-revenues" class="hidden">
+<div class="panel">
+<h3>Enregistrer une opération</h3>
+<p class="muted">Enregistre tes ventes et tes dépenses. Les montants en CDF et en USD restent séparés.</p>
+<form id="transaction-form">
+<div class="field"><label>Entreprise concernée *</label><select id="transaction-business" required></select></div>
+<div class="two-col">
+<div class="field"><label>Type d'opération *</label><select id="transaction-type"><option value="sale">Vente / Recette</option><option value="expense">Dépense</option></select></div>
+<div class="field"><label>Date *</label><input id="transaction-date" type="date" required></div></div>
+<div class="field"><label>Description *</label><input id="transaction-description" required placeholder="Ex. Vente de marchandises"></div>
+<div class="two-col">
+<div class="field"><label>Catégorie</label><input id="transaction-category" placeholder="Ex. Transport, alimentation..."></div>
+<div class="field"><label>Nom du client (facultatif)</label><input id="transaction-customer" placeholder="Nom du client"></div></div>
+<div class="two-col">
+<div class="field"><label>Montant total *</label><input id="transaction-amount" type="number" min="0.01" step="0.01" required></div>
+<div class="field"><label>Montant déjà encaissé / payé</label><input id="transaction-paid" type="number" min="0" step="0.01" value="0" required></div></div>
+<div class="two-col">
+<div class="field"><label>Devise</label><select id="transaction-currency"><option value="CDF">CDF</option><option value="USD">USD</option></select></div>
+<div class="field"><label>Mode de paiement</label><select id="transaction-payment"><option value="">Non précisé</option><option>Espèces</option><option>Mobile Money</option><option>Virement bancaire</option><option>Carte</option><option>Autre</option></select></div></div>
+<button class="btn btn-blue" id="transaction-submit">Enregistrer l'opération</button>
+<div class="form-message" id="transaction-message"></div>
+</form>
+</div>
+<div class="stats-grid">
+<div class="stat"><strong id="revenue-sales-cdf">0</strong><span>Ventes encaissées · CDF</span></div>
+<div class="stat"><strong id="revenue-expenses-cdf">0</strong><span>Dépenses payées · CDF</span></div>
+<div class="stat"><strong id="revenue-balance-cdf">0</strong><span>Solde de trésorerie · CDF</span></div>
+</div>
+<div class="stats-grid">
+<div class="stat"><strong id="revenue-sales-usd">0</strong><span>Ventes encaissées · USD</span></div>
+<div class="stat"><strong id="revenue-expenses-usd">0</strong><span>Dépenses payées · USD</span></div>
+<div class="stat"><strong id="revenue-balance-usd">0</strong><span>Solde de trésorerie · USD</span></div>
+</div>
+<div class="panel"><h3>Historique des opérations</h3><div class="field"><label>Filtrer par entreprise</label><select id="transaction-filter" onchange="loadTransactions()"><option value="">Toutes mes entreprises</option></select></div><div id="transaction-list" class="empty">Chargement...</div></div>
+</section>
+
+<!-- MODULE MARKETING -->
+<section id="section-marketing" class="hidden">
+<div class="panel">
+<h3>Créer une campagne marketing</h3>
+<p class="muted">Planifie tes actions de communication et suis leurs résultats.</p>
+<form id="campaign-form">
+<input type="hidden" id="campaign-id">
+<div class="field"><label>Entreprise concernée *</label><select id="campaign-business" required></select></div>
+<div class="field"><label>Nom de la campagne *</label><input id="campaign-name" required maxlength="150" placeholder="Ex. Promotion de fin d'année"></div>
+<div class="field"><label>Objectif</label><textarea id="campaign-objective" rows="2" placeholder="Que souhaites-tu obtenir ?"></textarea></div>
+<div class="two-col">
+<div class="field"><label>Public cible</label><input id="campaign-audience" placeholder="Ex. Femmes actives, étudiants..."></div>
+<div class="field"><label>Canal</label><select id="campaign-channel"><option value="">Choisir</option><option>Facebook</option><option>TikTok</option><option>Instagram</option><option>WhatsApp</option><option>YouTube</option><option>Radio</option><option>Affichage</option><option>Terrain</option><option>Autre</option></select></div></div>
+<div class="two-col">
+<div class="field"><label>Budget</label><input id="campaign-budget" type="number" min="0" step="0.01"></div>
+<div class="field"><label>Devise</label><select id="campaign-currency"><option value="CDF">CDF</option><option value="USD">USD</option></select></div></div>
+<div class="two-col">
+<div class="field"><label>Date de début</label><input id="campaign-start" type="date"></div>
+<div class="field"><label>Date de fin</label><input id="campaign-end" type="date"></div></div>
+<div class="field"><label>Statut</label><select id="campaign-status"><option value="draft">Brouillon</option><option value="planned">Planifiée</option><option value="active">En cours</option><option value="completed">Terminée</option><option value="paused">En pause</option></select></div>
+<div class="field"><label>Résultats / Observations</label><textarea id="campaign-results" rows="2"></textarea></div>
+<div class="two-col">
+<div class="field"><label>Portée / Personnes touchées</label><input id="campaign-reach" type="number" min="0" value="0"></div>
+<div class="field"><label>Interactions</label><input id="campaign-engagements" type="number" min="0" value="0"></div></div>
+<div class="field"><label>Prospects générés</label><input id="campaign-leads" type="number" min="0" value="0"></div>
+<div class="row-actions"><button class="btn btn-blue" id="campaign-submit">Enregistrer la campagne</button><button class="btn btn-light hidden" type="button" id="campaign-cancel" onclick="resetCampaignForm()">Annuler</button></div>
+<div class="form-message" id="campaign-message"></div>
+</form>
+</div>
+<div class="panel"><h3>Mes campagnes</h3><div class="field"><label>Filtrer par entreprise</label><select id="campaign-filter" onchange="loadCampaigns()"><option value="">Toutes mes entreprises</option></select></div><div id="campaign-list" class="empty">Chargement...</div></div>
+</section>
+
+<!-- MODULE CONTENU -->
+<section id="section-content" class="hidden">
+<div class="panel">
+<h3>Organiser une publication</h3>
+<p class="muted">Prépare tes idées, rédige tes publications et planifie leur diffusion.</p>
+<form id="content-form">
+<input type="hidden" id="content-id">
+<div class="field"><label>Entreprise concernée *</label><select id="content-business" required></select></div>
+<div class="field"><label>Titre du contenu *</label><input id="content-title" required maxlength="180" placeholder="Ex. Présentation de mon nouveau produit"></div>
+<div class="two-col">
+<div class="field"><label>Plateforme</label><select id="content-platform"><option>TikTok</option><option>Facebook</option><option>Instagram</option><option>WhatsApp</option><option>YouTube</option><option>LinkedIn</option><option>Autre</option></select></div>
+<div class="field"><label>Type de contenu</label><select id="content-type"><option value="video">Vidéo</option><option value="image">Image</option><option value="story">Story</option><option value="text">Texte</option><option value="carousel">Carrousel</option><option value="live">Live</option><option value="other">Autre</option></select></div></div>
+<div class="field"><label>Description / Idée</label><textarea id="content-description" rows="2"></textarea></div>
+<div class="field"><label>Légende / Texte de publication</label><textarea id="content-caption" rows="4" placeholder="Écris ici le texte qui accompagnera ta publication..."></textarea></div>
+<div class="two-col">
+<div class="field"><label>Date prévue</label><input id="content-date" type="date"></div>
+<div class="field"><label>Statut</label><select id="content-status"><option value="idea">Idée</option><option value="draft">Brouillon</option><option value="ready">Prêt à publier</option><option value="scheduled">Programmé</option><option value="published">Publié</option></select></div></div>
+<div class="field"><label>Lien de la publication (si publiée)</label><input id="content-url" type="url" placeholder="https://..."></div>
+<div class="row-actions"><button class="btn btn-blue" id="content-submit">Enregistrer le contenu</button><button class="btn btn-light hidden" type="button" id="content-cancel" onclick="resetContentForm()">Annuler</button></div>
+<div class="form-message" id="content-message"></div>
+</form>
+</div>
+<div class="panel"><h3>Mon calendrier de contenu</h3><div class="field"><label>Filtrer par entreprise</label><select id="content-filter" onchange="loadContents()"><option value="">Toutes mes entreprises</option></select></div><div id="content-list" class="empty">Chargement...</div></div>
+</section>
+
+<!-- ELSA -->
+<section id="section-elsa" class="hidden">
+<div class="panel">
+<div class="elsa-intro"><h3>🤖 ELSA – Ton assistante entrepreneuriale</h3><p>Une intelligence conçue pour les réalités des entrepreneurs africains, avec la RDC comme priorité.</p></div>
+<div class="field"><label for="elsa-business">Entreprise concernée</label><select id="elsa-business"><option value="">Conseils généraux</option></select><div class="small-note">Sélectionne l'entreprise sur laquelle tu souhaites travailler.</div></div>
+<div id="elsa-chat-history" class="elsa-chat-history" aria-live="polite">
+<div class="elsa-message assistant">Bonjour ! Je suis ELSA, ton assistante entrepreneuriale. 👋
+
+Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aider à trouver des solutions concrètes adaptées à ta réalité.</div>
+</div>
+<form id="elsa-chat-form" class="elsa-chat-form">
+<div class="field"><label for="elsa-chat-input">Ton message</label><textarea id="elsa-chat-input" rows="2" maxlength="5000" placeholder="Explique-moi ce dont tu as besoin..." required></textarea></div>
+<button class="btn btn-blue" id="elsa-send" type="submit">Envoyer</button>
+</form>
+<div id="elsa-status" class="elsa-status" role="status"></div>
+<p class="elsa-disclaimer">ELSA peut t'aider à réfléchir et à organiser ton activité. Vérifie les informations importantes concernant les prix, les lois et les démarches officielles.</p>
+</div>
+</section>
+
+<!-- PROFIL -->
 <section id="section-profile" class="hidden">
 <div class="panel"><h3>Mon profil</h3>
 <div class="field"><label>Photo de profil</label>
@@ -370,17 +483,18 @@ Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aid
 </form></div>
 </section>
 
-</main></div></div><script>
+</main></div></div>
+
+<script>
 /* CONFIGURATION SUPABASE */
 const SUPABASE_URL="https://omwdabkrnkpyxhsohtol.supabase.co";
 const SUPABASE_KEY="sb_publishable_G0cficld3B6oVyeE6_rSLQ_MG-fpXZG";
 const STORAGE_BUCKET="endeleya-media";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-let currentUser=null,currentProfile=null,businesses=[],offers=[],authMode="signup";
-let elsaMessages=[];
-let elsaBusy=false;
-let elsaLastBusinessId=null;
+let currentUser=null,currentProfile=null,businesses=[],offers=[];
+let contacts=[],transactions=[],campaigns=[],contents=[];
+let authMode="signup",elsaMessages=[],elsaBusy=false,elsaLastBusinessId=null;
 
 const $=id=>document.getElementById(id);
 
@@ -393,6 +507,22 @@ function slugify(value){
 }
 function escapeHTML(value){
  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+function money(value,currency="CDF"){
+ return Number(value||0).toLocaleString("fr-FR",{maximumFractionDigits:2})+" "+currency;
+}
+function dateToday(){
+ const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+function businessName(id){
+ return businesses.find(b=>b.id===id)?.name||"Entreprise";
+}
+function fillBusinessSelect(id,includeAll=false){
+ const select=$(id);if(!select)return;
+ const previous=select.value;
+ select.innerHTML=businesses.map(b=>`<option value="${escapeHTML(b.id)}">${escapeHTML(b.name)}</option>`).join("");
+ if(includeAll)select.insertAdjacentHTML("afterbegin",'<option value="">Toutes mes entreprises</option>');
+ if(businesses.some(b=>b.id===previous)||includeAll&&!previous)select.value=previous;
 }
 function showHome(){
  $("home-page").classList.remove("hidden");$("public-header").classList.remove("hidden");$("public-footer").classList.remove("hidden");$("app").classList.add("hidden");
@@ -414,11 +544,11 @@ function updateAuthMode(){
 }
 function switchAuthMode(){authMode=authMode==="signup"?"login":"signup";updateAuthMode();message("auth-message","");}
 
-/* OUTILS PHOTOS */
+/* PHOTOS */
 function validateImage(file){
  if(!file)return "Choisis une image.";
  if(!["image/jpeg","image/png","image/webp"].includes(file.type))return "Format non accepté. Utilise JPG, PNG ou WebP.";
- if(file.size>5*1024*1024)return "Cette image dépasse 5 Mo. Choisis une image plus légère.";
+ if(file.size>5*1024*1024)return "Cette image dépasse 5 Mo.";
  return "";
 }
 async function uploadImage(file,folder){
@@ -428,15 +558,10 @@ async function uploadImage(file,folder){
  const path=currentUser.id+"/"+folder+"/"+filename;
  const {error}=await db.storage.from(STORAGE_BUCKET).upload(path,file,{contentType:file.type,upsert:false});
  if(error)throw error;
- const {data}=db.storage.from(STORAGE_BUCKET).getPublicUrl(path);
- return data.publicUrl;
+ return db.storage.from(STORAGE_BUCKET).getPublicUrl(path).data.publicUrl;
 }
 async function uploadMany(files,folder){
- const urls=[];
- for(const file of Array.from(files||[])){
-  urls.push(await uploadImage(file,folder));
- }
- return urls;
+ const urls=[];for(const file of Array.from(files||[]))urls.push(await uploadImage(file,folder));return urls;
 }
 function renderGallery(urls){
  if(!Array.isArray(urls)||!urls.length)return "";
@@ -465,21 +590,27 @@ $("auth-form").addEventListener("submit",async event=>{
 /* SESSION ET NAVIGATION */
 async function enterApp(){
  if(!currentUser)return;
- showApp();await loadProfile();await loadBusinesses();await loadOffers();goToSection("dashboard");
+ showApp();await loadProfile();await loadBusinesses();await loadOffers();
+ await Promise.all([loadContacts(),loadTransactions(),loadCampaigns(),loadContents()]);
+ goToSection("dashboard");
 }
 function goToSection(name){
  const sections=["dashboard","business","offers","customers","revenues","marketing","content","elsa","profile"];
  sections.forEach(s=>$("section-"+s).classList.toggle("hidden",s!==name));
  document.querySelectorAll(".side-link[data-section]").forEach(btn=>btn.classList.toggle("active",btn.dataset.section===name));
- const titles={dashboard:"Tableau de bord",business:"Mon Business",offers:"Mes offres",customers:"Mes contacts",revenues:"Mes revenus",marketing:"Marketing",content:"Mon contenu",elsa:"ELSA",profile:"Mon profil"};
+ const titles={dashboard:"Tableau de bord",business:"Mon Business",offers:"Mes offres",customers:"Mes contacts",revenues:"Revenus",marketing:"Marketing",content:"Mon contenu",elsa:"ELSA",profile:"Mon profil"};
  $("section-title").textContent=titles[name]||"Mon espace";$("sidebar").classList.remove("mobile-open");
  if(name==="business")loadBusinesses();
  if(name==="offers"){loadBusinesses();loadOffers();}
+ if(name==="customers")loadContacts();
+ if(name==="revenues")loadTransactions();
+ if(name==="marketing")loadCampaigns();
+ if(name==="content")loadContents();
  if(name==="elsa")updateElsaBusinessSelect();
 }
 async function logout(){
  const {error}=await db.auth.signOut();if(error){alert("Impossible de se déconnecter : "+error.message);return;}
- currentUser=null;currentProfile=null;businesses=[];offers=[];elsaMessages=[];showHome();
+ currentUser=null;currentProfile=null;businesses=[];offers=[];contacts=[];transactions=[];campaigns=[];contents=[];elsaMessages=[];showHome();
 }
 db.auth.onAuthStateChange((event,session)=>{
  if(session?.user){currentUser=session.user;if($("app").classList.contains("hidden"))setTimeout(()=>enterApp(),0);}
@@ -490,17 +621,15 @@ db.auth.onAuthStateChange((event,session)=>{
  if(data.session?.user){currentUser=data.session.user;await enterApp();}else showHome();
 })();
 
-/* PROFIL ET PHOTO DE PROFIL */
+/* PROFIL */
 async function loadProfile(){
  if(!currentUser)return;
  const {data,error}=await db.from("profiles").select("id,full_name,phone,city,province,avatar_url").eq("id",currentUser.id).maybeSingle();
  if(error){console.error("Profil :",error.message);return;}
  currentProfile=data||{};
  $("profile-name").value=currentProfile.full_name||currentUser.user_metadata?.full_name||"";
- $("profile-phone").value=currentProfile.phone||"";
- $("profile-city").value=currentProfile.city||"";
- $("profile-province").value=currentProfile.province||"";
- $("profile-email").value=currentUser.email||"";
+ $("profile-phone").value=currentProfile.phone||"";$("profile-city").value=currentProfile.city||"";
+ $("profile-province").value=currentProfile.province||"";$("profile-email").value=currentUser.email||"";
  if(currentProfile.avatar_url)$("avatar-preview").src=currentProfile.avatar_url;
 }
 $("avatar-file").addEventListener("change",async event=>{
@@ -510,8 +639,7 @@ $("avatar-file").addEventListener("change",async event=>{
   const url=await uploadImage(file,"profiles");
   const {error}=await db.from("profiles").upsert({id:currentUser.id,avatar_url:url},{onConflict:"id"});
   if(error)throw error;
-  $("avatar-preview").src=url;$("avatar-message").textContent="Photo de profil enregistrée.";
-  await loadProfile();
+  $("avatar-preview").src=url;$("avatar-message").textContent="Photo de profil enregistrée.";await loadProfile();
  }catch(error){$("avatar-message").textContent="Erreur : "+error.message;}
  finally{event.target.value="";}
 });
@@ -523,114 +651,70 @@ $("profile-form").addEventListener("submit",async event=>{
   message("profile-message","Ton profil a été enregistré.","success");await loadProfile();
  }catch(error){message("profile-message",error.message,"error");}
  finally{button.disabled=false;}
-});/* ENTREPRISES */
+});
+
+/* ENTREPRISES */
 async function loadBusinesses(){
  if(!currentUser)return;
- const list=$("business-list");list.textContent="Chargement...";
+ const list=$("business-list");if(list)list.textContent="Chargement...";
  const {data,error}=await db.from("businesses").select("id,name,slug,description,category,province,city,whatsapp,email,status,created_at,logo_url,cover_url,gallery_urls").eq("owner_id",currentUser.id).order("created_at",{ascending:false});
- if(error){list.textContent="Impossible de charger les entreprises : "+error.message;return;}
- businesses=data||[];$("business-count").textContent=businesses.length;renderBusinesses();updateBusinessSelect();updateElsaBusinessSelect();
+ if(error){if(list)list.textContent="Impossible de charger les entreprises : "+error.message;return;}
+ businesses=data||[];$("business-count").textContent=businesses.length;
+ if(list)renderBusinesses();
+ updateBusinessSelect();updateElsaBusinessSelect();
+ ["contact-business","transaction-business","campaign-business","content-business"].forEach(id=>fillBusinessSelect(id));
+ ["contact-filter","transaction-filter","campaign-filter","content-filter"].forEach(id=>fillBusinessSelect(id,true));
 }
-
-/* PUBLICATION ET DÉPUBLICATION D'UNE VITRINE */
 async function toggleBusinessPublication(id){
- const business=businesses.find(item=>item.id===id);
- if(!business)return;
-
+ const business=businesses.find(item=>item.id===id);if(!business)return;
  const nextStatus=business.status==="published"?"draft":"published";
- const action=nextStatus==="published"?"publier":"dépublier";
-
- if(!confirm(`Veux-tu vraiment ${action} la vitrine « ${business.name} » ?`))return;
-
- const {error}=await db.from("businesses")
-  .update({status:nextStatus})
-  .eq("id",id)
-  .eq("owner_id",currentUser.id);
-
- if(error){
-  alert("Impossible de modifier la publication : "+error.message);
-  return;
- }
-
- await loadBusinesses();
- await loadOffers();
+ if(!confirm(`Veux-tu vraiment ${nextStatus==="published"?"publier":"dépublier"} la vitrine « ${business.name} » ?`))return;
+ const {error}=await db.from("businesses").update({status:nextStatus}).eq("id",id).eq("owner_id",currentUser.id);
+ if(error){alert("Impossible de modifier la publication : "+error.message);return;}
+ await loadBusinesses();await loadOffers();
 }
-
 function renderBusinesses(){
  const list=$("business-list");
-
- if(!businesses.length){
-  list.innerHTML='<div class="empty">Tu n’as pas encore enregistré d’entreprise. Crée ta première vitrine ci-dessus.</div>';
-  return;
- }
-
+ if(!businesses.length){list.innerHTML='<div class="empty">Tu n’as pas encore enregistré d’entreprise. Crée ta première vitrine ci-dessus.</div>';return;}
  list.innerHTML=businesses.map(b=>{
-  const published=b.status==="published";
-  const publicUrl="/vitrine/"+encodeURIComponent(b.slug||"");
-
-  return `
-  <div class="data-item" style="align-items:flex-start">
+  const published=b.status==="published",publicUrl="/vitrine/"+encodeURIComponent(b.slug||"");
+  return `<div class="data-item" style="align-items:flex-start">
    <div style="flex:1;min-width:180px">
     <strong>${escapeHTML(b.name)}</strong>
     <div class="small-note">${escapeHTML(b.category||"Activité")} · ${escapeHTML(b.city||"")} ${escapeHTML(b.province||"")}</div>
     <span class="pill">${published?"Vitrine publiée":"Brouillon"}</span>
-
-    ${published?`
-     <p class="small-note">
-      <a href="${publicUrl}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:700">
-       Voir ma vitrine publique ↗
-      </a>
-     </p>
-    `:""}
-
+    ${published?`<p class="small-note"><a href="${publicUrl}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:700">Voir ma vitrine publique ↗</a></p>`:""}
     ${b.logo_url?`<div><p class="small-note">Logo</p><img class="photo-thumb" src="${escapeHTML(b.logo_url)}" alt="Logo"></div>`:""}
     ${b.cover_url?`<div><p class="small-note">Couverture</p><img class="photo-preview" src="${escapeHTML(b.cover_url)}" alt="Couverture"></div>`:""}
     ${renderGallery(b.gallery_urls)}
-
-    <div class="row-actions">
-     <button class="btn ${published?"btn-red":"btn-blue"}" type="button" onclick="toggleBusinessPublication('${b.id}')">
-      ${published?"Dépublier ma vitrine":"Publier ma vitrine"}
-     </button>
-    </div>
+    <div class="row-actions"><button class="btn ${published?"btn-red":"btn-blue"}" type="button" onclick="toggleBusinessPublication('${b.id}')">${published?"Dépublier ma vitrine":"Publier ma vitrine"}</button></div>
    </div>
-
    <div class="photo-tools" style="min-width:220px;flex:1">
     <strong>📷 Photos de l'entreprise</strong><br>
     <label class="upload-label">Ajouter un logo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="businessPhoto(this,'${b.id}','logo_url')"></label>
     <label class="upload-label">Photo de couverture<input type="file" accept="image/jpeg,image/png,image/webp" onchange="businessPhoto(this,'${b.id}','cover_url')"></label>
     <label class="upload-label">Galerie de photos<input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="businessGallery(this,'${b.id}')"></label>
     <div class="photo-status" id="business-photo-status-${b.id}">Images JPG, PNG ou WebP · 5 Mo maximum par image.</div>
-   </div>
-  </div>`;
+   </div></div>`;
  }).join("");
 }
-
 async function businessPhoto(input,businessId,column){
- const file=input.files[0];if(!file)return;
- const status=$("business-photo-status-"+businessId);status.textContent="Téléchargement...";
+ const file=input.files[0];if(!file)return;const status=$("business-photo-status-"+businessId);status.textContent="Téléchargement...";
  try{
   const url=await uploadImage(file,"businesses");
   const {error}=await db.from("businesses").update({[column]:url}).eq("id",businessId).eq("owner_id",currentUser.id);
-  if(error)throw error;
-  status.textContent="Photo enregistrée.";await loadBusinesses();
- }catch(error){status.textContent="Erreur : "+error.message;}
- finally{input.value="";}
+  if(error)throw error;status.textContent="Photo enregistrée.";await loadBusinesses();
+ }catch(error){status.textContent="Erreur : "+error.message;}finally{input.value="";}
 }
-
 async function businessGallery(input,businessId){
- const files=Array.from(input.files||[]);if(!files.length)return;
- const status=$("business-photo-status-"+businessId);status.textContent="Téléchargement de la galerie...";
+ const files=Array.from(input.files||[]);if(!files.length)return;const status=$("business-photo-status-"+businessId);status.textContent="Téléchargement de la galerie...";
  try{
   const company=businesses.find(b=>b.id===businessId);if(!company)throw new Error("Entreprise introuvable.");
-  const newUrls=await uploadMany(files,"businesses");
-  const urls=[...(Array.isArray(company.gallery_urls)?company.gallery_urls:[]),...newUrls];
+  const newUrls=await uploadMany(files,"businesses"),urls=[...(Array.isArray(company.gallery_urls)?company.gallery_urls:[]),...newUrls];
   const {error}=await db.from("businesses").update({gallery_urls:urls}).eq("id",businessId).eq("owner_id",currentUser.id);
-  if(error)throw error;
-  status.textContent="Galerie enregistrée.";await loadBusinesses();
- }catch(error){status.textContent="Erreur : "+error.message;}
- finally{input.value="";}
+  if(error)throw error;status.textContent="Galerie enregistrée.";await loadBusinesses();
+ }catch(error){status.textContent="Erreur : "+error.message;}finally{input.value="";}
 }
-
 $("business-form").addEventListener("submit",async event=>{
  event.preventDefault();const button=$("business-submit");button.disabled=true;message("business-message","Enregistrement de ton entreprise...");
  try{
@@ -638,297 +722,347 @@ $("business-form").addEventListener("submit",async event=>{
   const payload={owner_id:currentUser.id,name,slug:slugify(name)+"-"+Math.random().toString(36).slice(2,7),category:$("business-category").value,description:$("business-description").value.trim(),country:"République démocratique du Congo",province:$("business-province").value.trim(),city:$("business-city").value.trim(),whatsapp:$("business-whatsapp").value.trim(),email:$("business-email").value.trim(),address:$("business-address").value.trim(),status:"draft"};
   const {error}=await db.from("businesses").insert(payload);if(error)throw error;
   message("business-message","Entreprise enregistrée avec succès !","success");$("business-form").reset();await loadBusinesses();
- }catch(error){message("business-message",error.message,"error");}
- finally{button.disabled=false;}
+ }catch(error){message("business-message",error.message,"error");}finally{button.disabled=false;}
 });
 
-/* SELECTEUR ENTREPRISE POUR LES OFFRES */
+/* OFFRES */
 function updateBusinessSelect(){
  const select=$("offer-business"),previous=select.value;
  select.innerHTML='<option value="">Choisir une entreprise</option>'+businesses.map(b=>`<option value="${escapeHTML(b.id)}">${escapeHTML(b.name)}${b.status==="published"?" — publiée":" — brouillon"}</option>`).join("");
  if(businesses.some(b=>b.id===previous))select.value=previous;
 }
-
-/* PRODUITS ET SERVICES */
 async function loadOffers(){
  if(!currentUser)return;
  const list=$("offer-list"),ids=businesses.map(b=>b.id);
-
- if(!ids.length){
-  offers=[];$("offer-count").textContent="0";
-  list.innerHTML='<div class="empty">Crée d’abord une entreprise pour pouvoir enregistrer des offres.</div>';
-  return;
- }
-
+ if(!ids.length){offers=[];$("offer-count").textContent="0";list.innerHTML='<div class="empty">Crée d’abord une entreprise pour pouvoir enregistrer des offres.</div>';return;}
  list.textContent="Chargement...";
  const {data,error}=await db.from("offers").select("id,business_id,offer_type,name,description,price,currency,status,availability,created_at,image_url,gallery_urls").in("business_id",ids).order("created_at",{ascending:false});
-
  if(error){list.textContent="Impossible de charger les offres : "+error.message;return;}
-
  offers=data||[];$("offer-count").textContent=offers.length;renderOffers();
 }
-
-/* PUBLICATION ET DÉPUBLICATION D'UNE OFFRE */
 async function toggleOfferPublication(id){
- const offer=offers.find(item=>item.id===id);
- if(!offer)return;
-
+ const offer=offers.find(item=>item.id===id);if(!offer)return;
  const company=businesses.find(b=>b.id===offer.business_id);
-
- if(!company){
-  alert("Entreprise introuvable.");
-  return;
- }
-
- if(company.status!=="published"){
-  alert("Publie d'abord la vitrine de cette entreprise avant de publier ses offres.");
-  return;
- }
-
+ if(!company){alert("Entreprise introuvable.");return;}
+ if(company.status!=="published"){alert("Publie d'abord la vitrine de cette entreprise avant de publier ses offres.");return;}
  const nextStatus=offer.status==="published"?"draft":"published";
- const action=nextStatus==="published"?"publier":"dépublier";
-
- if(!confirm(`Veux-tu vraiment ${action} l'offre « ${offer.name} » ?`))return;
-
- const {error}=await db.from("offers")
-  .update({status:nextStatus})
-  .eq("id",id)
-  .eq("business_id",company.id);
-
- if(error){
-  alert("Impossible de modifier la publication : "+error.message);
-  return;
- }
-
+ if(!confirm(`Veux-tu vraiment ${nextStatus==="published"?"publier":"dépublier"} l'offre « ${offer.name} » ?`))return;
+ const {error}=await db.from("offers").update({status:nextStatus}).eq("id",id).eq("business_id",company.id);
+ if(error){alert("Impossible de modifier la publication : "+error.message);return;}
  await loadOffers();
 }
-
 function renderOffers(){
  const list=$("offer-list");
-
- if(!offers.length){
-  list.innerHTML='<div class="empty">Aucune offre enregistrée pour le moment.</div>';
-  return;
- }
-
+ if(!offers.length){list.innerHTML='<div class="empty">Aucune offre enregistrée pour le moment.</div>';return;}
  list.innerHTML=offers.map(o=>{
   const company=businesses.find(b=>b.id===o.business_id);
-  const price=o.price===null?"Prix à préciser":Number(o.price).toLocaleString("fr-FR")+" "+(o.currency||"CDF");
-  const companyPublished=company?.status==="published";
-  const offerPublished=o.status==="published";
-
+  const price=o.price===null?"Prix à préciser":money(o.price,o.currency||"CDF");
+  const companyPublished=company?.status==="published",offerPublished=o.status==="published";
   return `<div class="data-item" style="align-items:flex-start">
-  <div style="flex:1;min-width:180px">
-   <strong>${escapeHTML(o.name)}</strong>
+   <div style="flex:1;min-width:180px"><strong>${escapeHTML(o.name)}</strong>
    <div class="small-note">${o.offer_type==="service"?"Service":"Produit"} · ${escapeHTML(company?.name||"")} · ${escapeHTML(price)}</div>
    <span class="pill">${offerPublished?"Offre publiée":"Brouillon"}</span>
-
    ${!companyPublished?'<p class="small-note" style="color:var(--red)">Publie d’abord la vitrine de cette entreprise pour rendre cette offre visible.</p>':""}
-
    ${o.image_url?`<div><img class="photo-preview" src="${escapeHTML(o.image_url)}" alt="${escapeHTML(o.name)}"></div>`:""}
    ${renderGallery(o.gallery_urls)}
-
-   <div class="row-actions">
-    <button class="btn ${offerPublished?"btn-red":"btn-blue"}" type="button" onclick="toggleOfferPublication('${o.id}')" ${!companyPublished&&!offerPublished?"disabled":""}>
-     ${offerPublished?"Dépublier cette offre":"Publier cette offre"}
-    </button>
-   </div>
-  </div>
-
-  <div class="photo-tools" style="min-width:200px;flex:1">
-   <strong>📷 Photos de l'offre</strong><br>
+   <div class="row-actions"><button class="btn ${offerPublished?"btn-red":"btn-blue"}" type="button" onclick="toggleOfferPublication('${o.id}')" ${!companyPublished&&!offerPublished?"disabled":""}>${offerPublished?"Dépublier cette offre":"Publier cette offre"}</button></div></div>
+   <div class="photo-tools" style="min-width:200px;flex:1"><strong>📷 Photos de l'offre</strong><br>
    <label class="upload-label">Ajouter une photo<input type="file" accept="image/jpeg,image/png,image/webp" onchange="offerPhoto(this,'${o.id}','image_url')"></label>
    <label class="upload-label">Ajouter à la galerie<input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="offerGallery(this,'${o.id}')"></label>
-   <div class="photo-status" id="offer-photo-status-${o.id}">5 Mo maximum par image.</div>
-  </div>
-  </div>`;
+   <div class="photo-status" id="offer-photo-status-${o.id}">5 Mo maximum par image.</div></div></div>`;
  }).join("");
 }
-
 async function offerPhoto(input,offerId,column){
- const file=input.files[0];if(!file)return;
- const status=$("offer-photo-status-"+offerId);status.textContent="Téléchargement...";
+ const file=input.files[0];if(!file)return;const status=$("offer-photo-status-"+offerId);status.textContent="Téléchargement...";
  try{
-  const url=await uploadImage(file,"offers");
-  const {error}=await db.from("offers").update({[column]:url}).eq("id",offerId);
-  if(error)throw error;
-  status.textContent="Photo enregistrée.";await loadOffers();
- }catch(error){status.textContent="Erreur : "+error.message;}
- finally{input.value="";}
+  const url=await uploadImage(file,"offers");const {error}=await db.from("offers").update({[column]:url}).eq("id",offerId);
+  if(error)throw error;status.textContent="Photo enregistrée.";await loadOffers();
+ }catch(error){status.textContent="Erreur : "+error.message;}finally{input.value="";}
 }
-
 async function offerGallery(input,offerId){
- const files=Array.from(input.files||[]);if(!files.length)return;
- const status=$("offer-photo-status-"+offerId);status.textContent="Téléchargement de la galerie...";
+ const files=Array.from(input.files||[]);if(!files.length)return;const status=$("offer-photo-status-"+offerId);status.textContent="Téléchargement de la galerie...";
  try{
   const offer=offers.find(o=>o.id===offerId);if(!offer)throw new Error("Offre introuvable.");
-  const newUrls=await uploadMany(files,"offers");
-  const urls=[...(Array.isArray(offer.gallery_urls)?offer.gallery_urls:[]),...newUrls];
+  const newUrls=await uploadMany(files,"offers"),urls=[...(Array.isArray(offer.gallery_urls)?offer.gallery_urls:[]),...newUrls];
   const {error}=await db.from("offers").update({gallery_urls:urls}).eq("id",offerId);
-  if(error)throw error;
-  status.textContent="Galerie enregistrée.";await loadOffers();
- }catch(error){status.textContent="Erreur : "+error.message;}
- finally{input.value="";}
+  if(error)throw error;status.textContent="Galerie enregistrée.";await loadOffers();
+ }catch(error){status.textContent="Erreur : "+error.message;}finally{input.value="";}
 }
-
 $("offer-form").addEventListener("submit",async event=>{
  event.preventDefault();const button=$("offer-submit");button.disabled=true;message("offer-message","Enregistrement de l'offre...");
  try{
-  const businessId=$("offer-business").value;
-
-  if(!businesses.some(b=>b.id===businessId))throw new Error("Choisis une entreprise qui t'appartient.");
-
-  const rawPrice=$("offer-price").value,name=$("offer-name").value.trim();
-  let imageUrl=null,galleryUrls=[];
-
-  const imageFile=$("offer-image").files[0];
-  if(imageFile){message("offer-message","Téléchargement de la photo principale...");imageUrl=await uploadImage(imageFile,"offers");}
-
-  const galleryFiles=$("offer-gallery").files;
-  if(galleryFiles.length){message("offer-message","Téléchargement des autres photos...");galleryUrls=await uploadMany(galleryFiles,"offers");}
-
+  const businessId=$("offer-business").value;if(!businesses.some(b=>b.id===businessId))throw new Error("Choisis une entreprise qui t'appartient.");
+  const rawPrice=$("offer-price").value,name=$("offer-name").value.trim();let imageUrl=null,galleryUrls=[];
+  const imageFile=$("offer-image").files[0];if(imageFile){message("offer-message","Téléchargement de la photo principale...");imageUrl=await uploadImage(imageFile,"offers");}
+  const galleryFiles=$("offer-gallery").files;if(galleryFiles.length){message("offer-message","Téléchargement des autres photos...");galleryUrls=await uploadMany(galleryFiles,"offers");}
   const payload={business_id:businessId,offer_type:$("offer-type").value,name,slug:slugify(name)+"-"+Math.random().toString(36).slice(2,6),description:$("offer-description").value.trim(),price:rawPrice===""?null:Number(rawPrice),currency:$("offer-currency").value,status:"draft",availability:"available",image_url:imageUrl,gallery_urls:galleryUrls};
-
   const {error}=await db.from("offers").insert(payload);if(error)throw error;
-
   message("offer-message","Offre et photos enregistrées avec succès !","success");$("offer-form").reset();await loadOffers();
- }catch(error){message("offer-message",error.message,"error");}
- finally{button.disabled=false;}
+ }catch(error){message("offer-message",error.message,"error");}finally{button.disabled=false;}
 });
 
-/* ELSA : CONNEXION AU MOTEUR IA SECURISE */
-function updateElsaBusinessSelect(){
- const select=$("elsa-business");
- if(!select)return;
-
- const previous=select.value;
- select.innerHTML="";
-
- if(businesses.length===0){
-  select.add(new Option("Conseils généraux – aucune entreprise", ""));
-  return;
- }
-
- if(businesses.length>1){
-  select.add(new Option("Choisir une entreprise", ""));
- }
-
- businesses.forEach(b=>{
-  select.add(new Option(b.name||"Mon entreprise",b.id));
- });
-
- if(previous&&businesses.some(b=>b.id===previous)){
-  select.value=previous;
- }else if(businesses.length===1){
-  select.value=businesses[0].id;
- }
+/* CONTACTS : AJOUT, MODIFICATION, SUPPRESSION */
+function resetContactForm(){
+ $("contact-form").reset();$("contact-id").value="";$("contact-submit").textContent="Enregistrer le contact";
+ $("contact-cancel").classList.add("hidden");message("contact-message","");
+}
+async function loadContacts(){
+ if(!currentUser)return;
+ const list=$("contact-list");if(!list)return;
+ if(!businesses.length){contacts=[];list.innerHTML='<div class="empty">Crée d’abord une entreprise pour ajouter des contacts.</div>';$("contact-count").textContent="0";return;}
+ list.textContent="Chargement...";
+ let query=db.from("business_contacts").select("*").in("business_id",businesses.map(b=>b.id)).order("created_at",{ascending:false});
+ const filter=$("contact-filter")?.value;if(filter)query=query.eq("business_id",filter);
+ const {data,error}=await query;
+ if(error){list.textContent="Erreur de chargement : "+error.message;return;}
+ contacts=data||[];$("contact-count").textContent=contacts.length;renderContacts();
+}
+function renderContacts(){
+ const list=$("contact-list");
+ if(!contacts.length){list.innerHTML='<div class="empty">Aucun contact enregistré pour le moment.</div>';return;}
+ const labels={client:"Client",prospect:"Prospect",supplier:"Fournisseur",partner:"Partenaire",other:"Autre"};
+ list.innerHTML=contacts.map(c=>`<div class="data-item">
+ <div style="flex:1;min-width:180px"><strong>${escapeHTML(c.full_name)}</strong>
+ <div class="small-note">${labels[c.contact_type]||"Autre"} · ${escapeHTML(businessName(c.business_id))}</div>
+ <div class="small-note">${escapeHTML(c.phone||"")}${c.whatsapp?" · WhatsApp : "+escapeHTML(c.whatsapp):""}</div>
+ <div class="small-note">${escapeHTML(c.email||"")} ${c.city?"· "+escapeHTML(c.city):""}</div>
+ ${c.notes?`<p class="small-note">${escapeHTML(c.notes)}</p>`:""}
+ </div><div class="row-actions">
+ <button class="btn btn-light" onclick="editContact('${c.id}')">Modifier</button>
+ <button class="btn btn-red" onclick="deleteContact('${c.id}')">Supprimer</button>
+ </div></div>`).join("");
+}
+$("contact-form").addEventListener("submit",async event=>{
+ event.preventDefault();const button=$("contact-submit");button.disabled=true;
+ message("contact-message","Enregistrement du contact...");
+ try{
+  const id=$("contact-id").value;
+  const payload={business_id:$("contact-business").value,full_name:$("contact-name").value.trim(),contact_type:$("contact-type").value,phone:$("contact-phone").value.trim(),whatsapp:$("contact-whatsapp").value.trim(),email:$("contact-email").value.trim(),address:$("contact-address").value.trim(),city:$("contact-city").value.trim(),notes:$("contact-notes").value.trim()};
+  if(!payload.business_id)throw new Error("Choisis une entreprise.");
+  const result=id?await db.from("business_contacts").update(payload).eq("id",id):await db.from("business_contacts").insert(payload);
+  if(result.error)throw result.error;
+  message("contact-message",id?"Contact modifié avec succès.":"Contact ajouté avec succès.","success");resetContactForm();await loadContacts();
+ }catch(error){message("contact-message",error.message,"error");}finally{button.disabled=false;}
+});
+function editContact(id){
+ const c=contacts.find(x=>x.id===id);if(!c)return;
+ $("contact-id").value=c.id;$("contact-business").value=c.business_id;$("contact-name").value=c.full_name||"";
+ $("contact-type").value=c.contact_type||"client";$("contact-phone").value=c.phone||"";$("contact-whatsapp").value=c.whatsapp||"";
+ $("contact-email").value=c.email||"";$("contact-address").value=c.address||"";$("contact-city").value=c.city||"";$("contact-notes").value=c.notes||"";
+ $("contact-submit").textContent="Enregistrer les modifications";$("contact-cancel").classList.remove("hidden");
+ $("section-customers").scrollIntoView({behavior:"smooth"});
+}
+async function deleteContact(id){
+ if(!confirm("Supprimer définitivement ce contact ?"))return;
+ const {error}=await db.from("business_contacts").delete().eq("id",id);
+ if(error){alert("Erreur : "+error.message);return;}await loadContacts();
 }
 
-function renderElsaMessages(){
- const history=$("elsa-chat-history");
- if(!history)return;
+/* REVENUS : VENTES ET DEPENSES */
+$("transaction-date").value=dateToday();
+$("transaction-form").addEventListener("submit",async event=>{
+ event.preventDefault();const button=$("transaction-submit");button.disabled=true;message("transaction-message","Enregistrement de l'opération...");
+ try{
+  const amount=Number($("transaction-amount").value),paid=Number($("transaction-paid").value);
+  if(!Number.isFinite(amount)||amount<=0)throw new Error("Le montant doit être supérieur à zéro.");
+  if(!Number.isFinite(paid)||paid<0||paid>amount)throw new Error("Le montant encaissé ou payé doit être compris entre zéro et le montant total.");
+  const payload={business_id:$("transaction-business").value,transaction_type:$("transaction-type").value,description:$("transaction-description").value.trim(),category:$("transaction-category").value.trim()||null,customer_name:$("transaction-customer").value.trim()||null,quantity:1,amount,amount_paid:paid,currency:$("transaction-currency").value,payment_method:$("transaction-payment").value||null,occurred_on:$("transaction-date").value};
+  if(!payload.business_id)throw new Error("Choisis une entreprise.");
+  const {error}=await db.from("business_transactions").insert(payload);if(error)throw error;
+  message("transaction-message","Opération enregistrée avec succès.","success");$("transaction-form").reset();$("transaction-date").value=dateToday();$("transaction-paid").value="0";await loadTransactions();
+ }catch(error){message("transaction-message",error.message,"error");}finally{button.disabled=false;}
+});
+async function loadTransactions(){
+ if(!currentUser)return;const list=$("transaction-list");if(!list)return;
+ if(!businesses.length){transactions=[];list.innerHTML='<div class="empty">Crée une entreprise pour enregistrer des opérations.</div>';return;}
+ list.textContent="Chargement...";
+ let query=db.from("business_transactions").select("*").in("business_id",businesses.map(b=>b.id)).order("occurred_on",{ascending:false});
+ const filter=$("transaction-filter")?.value;if(filter)query=query.eq("business_id",filter);
+ const {data,error}=await query;
+ if(error){list.textContent="Erreur de chargement : "+error.message;return;}
+ transactions=data||[];renderTransactions();
+}
+function renderTransactions(){
+ const sums={CDF:{sales:0,expenses:0},USD:{sales:0,expenses:0}};
+ transactions.forEach(t=>{
+  const currency=t.currency||"CDF",type=t.transaction_type==="sale"?"sales":"expenses";
+  if(sums[currency])sums[currency][type]+=Number(t.amount_paid||0);
+ });
+ ["CDF","USD"].forEach(cur=>{
+  $("revenue-sales-"+cur.toLowerCase()).textContent=money(sums[cur].sales,cur);
+  $("revenue-expenses-"+cur.toLowerCase()).textContent=money(sums[cur].expenses,cur);
+  $("revenue-balance-"+cur.toLowerCase()).textContent=money(sums[cur].sales-sums[cur].expenses,cur);
+ });
+ const list=$("transaction-list");
+ if(!transactions.length){list.innerHTML='<div class="empty">Aucune opération enregistrée.</div>';return;}
+ list.innerHTML=transactions.map(t=>{
+  const sale=t.transaction_type==="sale",remaining=Math.max(0,Number(t.amount)-Number(t.amount_paid));
+  return `<div class="data-item"><div style="flex:1;min-width:180px">
+   <strong>${escapeHTML(t.description)}</strong>
+   <div class="small-note">${sale?"Vente / recette":"Dépense"} · ${escapeHTML(businessName(t.business_id))} · ${escapeHTML(t.occurred_on||"")}</div>
+   <div class="small-note">Total : ${money(t.amount,t.currency)} · ${sale?"Encaissé":"Payé"} : ${money(t.amount_paid,t.currency)}</div>
+   ${remaining>0?`<span class="pill">Reste : ${money(remaining,t.currency)}</span>`:'<span class="pill">Soldé</span>'}
+   </div><button class="btn btn-red" onclick="deleteTransaction('${t.id}')">Supprimer</button></div>`;
+ }).join("");
+}
+async function deleteTransaction(id){
+ if(!confirm("Supprimer cette opération ?"))return;
+ const {error}=await db.from("business_transactions").delete().eq("id",id);
+ if(error){alert("Erreur : "+error.message);return;}await loadTransactions();
+}
 
+/* MARKETING : CAMPAGNES */
+function resetCampaignForm(){
+ $("campaign-form").reset();$("campaign-id").value="";$("campaign-reach").value="0";$("campaign-engagements").value="0";$("campaign-leads").value="0";
+ $("campaign-submit").textContent="Enregistrer la campagne";$("campaign-cancel").classList.add("hidden");message("campaign-message","");
+}
+$("campaign-form").addEventListener("submit",async event=>{
+ event.preventDefault();const button=$("campaign-submit");button.disabled=true;message("campaign-message","Enregistrement de la campagne...");
+ try{
+  const id=$("campaign-id").value;
+  const payload={business_id:$("campaign-business").value,name:$("campaign-name").value.trim(),objective:$("campaign-objective").value.trim(),target_audience:$("campaign-audience").value.trim(),channel:$("campaign-channel").value,budget:$("campaign-budget").value===""?0:Number($("campaign-budget").value),currency:$("campaign-currency").value,start_date:$("campaign-start").value||null,end_date:$("campaign-end").value||null,status:$("campaign-status").value,results:$("campaign-results").value.trim(),reach:Number($("campaign-reach").value||0),engagements:Number($("campaign-engagements").value||0),leads_generated:Number($("campaign-leads").value||0)};
+  if(!payload.business_id)throw new Error("Choisis une entreprise.");
+  const result=id?await db.from("marketing_campaigns").update(payload).eq("id",id):await db.from("marketing_campaigns").insert(payload);
+  if(result.error)throw result.error;
+  message("campaign-message",id?"Campagne modifiée avec succès.":"Campagne créée avec succès.","success");resetCampaignForm();await loadCampaigns();
+ }catch(error){message("campaign-message",error.message,"error");}finally{button.disabled=false;}
+});
+async function loadCampaigns(){
+ if(!currentUser)return;const list=$("campaign-list");if(!list)return;
+ if(!businesses.length){campaigns=[];list.innerHTML='<div class="empty">Crée une entreprise pour gérer tes campagnes.</div>';return;}
+ list.textContent="Chargement...";
+ let query=db.from("marketing_campaigns").select("*").in("business_id",businesses.map(b=>b.id)).order("created_at",{ascending:false});
+ const filter=$("campaign-filter")?.value;if(filter)query=query.eq("business_id",filter);
+ const {data,error}=await query;
+ if(error){list.textContent="Erreur de chargement : "+error.message;return;}
+ campaigns=data||[];renderCampaigns();
+}
+function renderCampaigns(){
+ const list=$("campaign-list");
+ if(!campaigns.length){list.innerHTML='<div class="empty">Aucune campagne marketing enregistrée.</div>';return;}
+ const labels={draft:"Brouillon",planned:"Planifiée",active:"En cours",completed:"Terminée",paused:"En pause"};
+ list.innerHTML=campaigns.map(c=>`<div class="data-item"><div style="flex:1;min-width:180px">
+ <strong>${escapeHTML(c.name)}</strong><div class="small-note">${escapeHTML(businessName(c.business_id))} · ${escapeHTML(c.channel||"Canal non précisé")}</div>
+ <span class="pill">${labels[c.status]||c.status}</span>
+ <div class="small-note">Budget : ${money(c.budget,c.currency)} · Portée : ${Number(c.reach||0).toLocaleString("fr-FR")} · Interactions : ${Number(c.engagements||0).toLocaleString("fr-FR")} · Prospects : ${Number(c.leads_generated||0).toLocaleString("fr-FR")}</div>
+ ${c.objective?`<p class="small-note">${escapeHTML(c.objective)}</p>`:""}
+ ${c.results?`<p class="small-note">Résultats : ${escapeHTML(c.results)}</p>`:""}
+ </div><div class="row-actions"><button class="btn btn-light" onclick="editCampaign('${c.id}')">Modifier</button><button class="btn btn-red" onclick="deleteCampaign('${c.id}')">Supprimer</button></div></div>`).join("");
+}
+function editCampaign(id){
+ const c=campaigns.find(x=>x.id===id);if(!c)return;
+ $("campaign-id").value=c.id;$("campaign-business").value=c.business_id;$("campaign-name").value=c.name||"";
+ $("campaign-objective").value=c.objective||"";$("campaign-audience").value=c.target_audience||"";$("campaign-channel").value=c.channel||"";
+ $("campaign-budget").value=c.budget??"";$("campaign-currency").value=c.currency||"CDF";$("campaign-start").value=c.start_date||"";
+ $("campaign-end").value=c.end_date||"";$("campaign-status").value=c.status||"draft";$("campaign-results").value=c.results||"";
+ $("campaign-reach").value=c.reach||0;$("campaign-engagements").value=c.engagements||0;$("campaign-leads").value=c.leads_generated||0;
+ $("campaign-submit").textContent="Enregistrer les modifications";$("campaign-cancel").classList.remove("hidden");
+ $("section-marketing").scrollIntoView({behavior:"smooth"});
+}
+async function deleteCampaign(id){
+ if(!confirm("Supprimer cette campagne ?"))return;
+ const {error}=await db.from("marketing_campaigns").delete().eq("id",id);
+ if(error){alert("Erreur : "+error.message);return;}await loadCampaigns();
+}
+
+/* CONTENU : IDEES, BROUILLONS, PROGRAMMATION ET PUBLICATIONS */
+function resetContentForm(){
+ $("content-form").reset();$("content-id").value="";$("content-submit").textContent="Enregistrer le contenu";
+ $("content-cancel").classList.add("hidden");message("content-message","");
+}
+$("content-form").addEventListener("submit",async event=>{
+ event.preventDefault();const button=$("content-submit");button.disabled=true;message("content-message","Enregistrement du contenu...");
+ try{
+  const id=$("content-id").value;
+  const payload={business_id:$("content-business").value,title:$("content-title").value.trim(),description:$("content-description").value.trim(),platform:$("content-platform").value,content_type:$("content-type").value,scheduled_for:$("content-date").value||null,status:$("content-status").value,caption:$("content-caption").value.trim(),published_url:$("content-url").value.trim()||null};
+  if(!payload.business_id)throw new Error("Choisis une entreprise.");
+  const result=id?await db.from("content_items").update(payload).eq("id",id):await db.from("content_items").insert(payload);
+  if(result.error)throw result.error;
+  message("content-message",id?"Contenu modifié avec succès.":"Contenu enregistré avec succès.","success");resetContentForm();await loadContents();
+ }catch(error){message("content-message",error.message,"error");}finally{button.disabled=false;}
+});
+async function loadContents(){
+ if(!currentUser)return;const list=$("content-list");if(!list)return;
+ if(!businesses.length){contents=[];list.innerHTML='<div class="empty">Crée une entreprise pour organiser tes contenus.</div>';return;}
+ list.textContent="Chargement...";
+ let query=db.from("content_items").select("*").in("business_id",businesses.map(b=>b.id)).order("created_at",{ascending:false});
+ const filter=$("content-filter")?.value;if(filter)query=query.eq("business_id",filter);
+ const {data,error}=await query;
+ if(error){list.textContent="Erreur de chargement : "+error.message;return;}
+ contents=data||[];renderContents();
+}
+function renderContents(){
+ const list=$("content-list");
+ if(!contents.length){list.innerHTML='<div class="empty">Aucun contenu enregistré. Ajoute ta première idée.</div>';return;}
+ const labels={idea:"Idée",draft:"Brouillon",ready:"Prêt à publier",scheduled:"Programmé",published:"Publié"};
+ list.innerHTML=contents.map(c=>`<div class="data-item"><div style="flex:1;min-width:180px">
+ <strong>${escapeHTML(c.title)}</strong><div class="small-note">${escapeHTML(businessName(c.business_id))} · ${escapeHTML(c.platform||"")} · ${escapeHTML(c.content_type||"")}</div>
+ <span class="pill">${labels[c.status]||c.status}</span>
+ ${c.scheduled_for?`<div class="small-note">Date prévue : ${escapeHTML(c.scheduled_for)}</div>`:""}
+ ${c.description?`<p class="small-note">${escapeHTML(c.description)}</p>`:""}
+ ${c.caption?`<p class="small-note">${escapeHTML(c.caption)}</p>`:""}
+ ${c.published_url?`<a href="${escapeHTML(c.published_url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px">Voir la publication ↗</a>`:""}
+ </div><div class="row-actions"><button class="btn btn-light" onclick="editContent('${c.id}')">Modifier</button><button class="btn btn-red" onclick="deleteContent('${c.id}')">Supprimer</button></div></div>`).join("");
+}
+function editContent(id){
+ const c=contents.find(x=>x.id===id);if(!c)return;
+ $("content-id").value=c.id;$("content-business").value=c.business_id;$("content-title").value=c.title||"";
+ $("content-description").value=c.description||"";$("content-platform").value=c.platform||"Autre";$("content-type").value=c.content_type||"video";
+ $("content-caption").value=c.caption||"";$("content-date").value=c.scheduled_for||"";$("content-status").value=c.status||"idea";
+ $("content-url").value=c.published_url||"";$("content-submit").textContent="Enregistrer les modifications";$("content-cancel").classList.remove("hidden");
+ $("section-content").scrollIntoView({behavior:"smooth"});
+}
+async function deleteContent(id){
+ if(!confirm("Supprimer ce contenu ?"))return;
+ const {error}=await db.from("content_items").delete().eq("id",id);
+ if(error){alert("Erreur : "+error.message);return;}await loadContents();
+}
+
+/* ELSA */
+function updateElsaBusinessSelect(){
+ const select=$("elsa-business");if(!select)return;
+ const previous=select.value;select.innerHTML="";
+ if(!businesses.length){select.add(new Option("Conseils généraux – aucune entreprise",""));return;}
+ if(businesses.length>1)select.add(new Option("Choisir une entreprise",""));
+ businesses.forEach(b=>select.add(new Option(b.name||"Mon entreprise",b.id)));
+ if(previous&&businesses.some(b=>b.id===previous))select.value=previous;
+ else if(businesses.length===1)select.value=businesses[0].id;
+}
+function renderElsaMessages(){
+ const history=$("elsa-chat-history");if(!history)return;
  const greeting=`<div class="elsa-message assistant">Bonjour ! Je suis ELSA, ton assistante entrepreneuriale. 👋
 
 Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aider à trouver des solutions concrètes adaptées à ta réalité.</div>`;
-
- history.innerHTML=greeting+elsaMessages.map(item=>`
-  <div class="elsa-message ${item.role==="user"?"user":"assistant"}">${escapeHTML(item.content)}</div>
- `).join("");
-
+ history.innerHTML=greeting+elsaMessages.map(item=>`<div class="elsa-message ${item.role==="user"?"user":"assistant"}">${escapeHTML(item.content)}</div>`).join("");
  history.scrollTop=history.scrollHeight;
 }
-
 function resetElsaConversation(){
- elsaMessages=[];
- renderElsaMessages();
- $("elsa-status").textContent="";
- $("elsa-status").className="elsa-status";
+ elsaMessages=[];renderElsaMessages();$("elsa-status").textContent="";$("elsa-status").className="elsa-status";
 }
-
 $("elsa-business").addEventListener("change",()=>{
  const selected=$("elsa-business").value;
- if(elsaLastBusinessId!==null&&selected!==elsaLastBusinessId){
-  resetElsaConversation();
- }
+ if(elsaLastBusinessId!==null&&selected!==elsaLastBusinessId)resetElsaConversation();
  elsaLastBusinessId=selected;
 });
-
 $("elsa-chat-form").addEventListener("submit",async event=>{
- event.preventDefault();
-
- if(elsaBusy)return;
-
- const input=$("elsa-chat-input");
- const button=$("elsa-send");
- const status=$("elsa-status");
- const businessSelect=$("elsa-business");
- const userMessage=input.value.trim();
-
+ event.preventDefault();if(elsaBusy)return;
+ const input=$("elsa-chat-input"),button=$("elsa-send"),status=$("elsa-status"),businessSelect=$("elsa-business"),userMessage=input.value.trim();
  if(!userMessage)return;
-
- if(businesses.length>1&&!businessSelect.value){
-  status.textContent="Choisis d'abord l'entreprise concernée.";
-  status.className="elsa-status error";
-  businessSelect.focus();
-  return;
- }
-
- if(!currentUser){
-  status.textContent="Reconnecte-toi à ton compte pour utiliser ELSA.";
-  status.className="elsa-status error";
-  return;
- }
-
- elsaMessages.push({role:"user",content:userMessage});
- elsaMessages=elsaMessages.slice(-20);
-
- input.value="";
- elsaBusy=true;
- button.disabled=true;
- button.textContent="ELSA réfléchit...";
- status.textContent="ELSA prépare sa réponse...";
- status.className="elsa-status";
-
- renderElsaMessages();
-
+ if(businesses.length>1&&!businessSelect.value){status.textContent="Choisis d'abord l'entreprise concernée.";status.className="elsa-status error";businessSelect.focus();return;}
+ if(!currentUser){status.textContent="Reconnecte-toi à ton compte pour utiliser ELSA.";status.className="elsa-status error";return;}
+ elsaMessages.push({role:"user",content:userMessage});elsaMessages=elsaMessages.slice(-20);input.value="";
+ elsaBusy=true;button.disabled=true;button.textContent="ELSA réfléchit...";status.textContent="ELSA prépare sa réponse...";status.className="elsa-status";renderElsaMessages();
  try{
-  const {data,error}=await db.functions.invoke("elsa-chat",{
-   body:{
-    messages:elsaMessages.slice(-20),
-    businessId:businessSelect.value||null
-   }
-  });
-
-  if(error)throw error;
-
-  if(!data||!data.answer){
-   throw new Error(data?.error||"ELSA n'a pas renvoyé de réponse.");
-  }
-
-  elsaMessages.push({role:"assistant",content:data.answer});
-  elsaMessages=elsaMessages.slice(-20);
-
-  renderElsaMessages();
-  status.textContent="ELSA est prête à poursuivre la conversation.";
-  status.className="elsa-status success";
-
+  const {data,error}=await db.functions.invoke("elsa-chat",{body:{messages:elsaMessages.slice(-20),businessId:businessSelect.value||null}});
+  if(error)throw error;if(!data||!data.answer)throw new Error(data?.error||"ELSA n'a pas renvoyé de réponse.");
+  elsaMessages.push({role:"assistant",content:data.answer});elsaMessages=elsaMessages.slice(-20);renderElsaMessages();
+  status.textContent="ELSA est prête à poursuivre la conversation.";status.className="elsa-status success";
  }catch(error){
-  console.error("Erreur ELSA :",error);
-  status.textContent="Impossible de joindre ELSA. Vérifie ta connexion ou réessaie dans quelques instants.";
-  status.className="elsa-status error";
- }finally{
-  elsaBusy=false;
-  button.disabled=false;
-  button.textContent="Envoyer";
-  input.focus();
- }
+  console.error("Erreur ELSA :",error);status.textContent="Impossible de joindre ELSA. Vérifie ta connexion ou réessaie dans quelques instants.";status.className="elsa-status error";
+ }finally{elsaBusy=false;button.disabled=false;button.textContent="Envoyer";input.focus();}
 });
 
-/* INITIALISATION ELSA */
-updateElsaBusinessSelect();
-renderElsaMessages();
-
+updateElsaBusinessSelect();renderElsaMessages();
 </script>
 </body>
-</html>
+  </html>
