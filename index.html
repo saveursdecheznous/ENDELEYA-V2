@@ -5,535 +5,855 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#007FFF">
-<title>ENDELEYA — Avance. Développe. Réussis.</title>
+<title>ENDELEYA – Avance. Développe. Réussis.</title>
+<meta name="description" content="ENDELEYA, la plateforme qui accompagne les entrepreneurs dans la présentation, l'organisation et le développement de leurs activités.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root {
   --blue:#007FFF;
   --red:#CE1021;
   --yellow:#F7D116;
   --dark:#14243A;
-  --muted:#64748b;
-  --light:#f4f8fd;
+  --muted:#68778B;
+  --bg:#F4F7FC;
+  --white:#fff;
+  --border:#E5EAF1;
+  --green:#168653;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:Arial,sans-serif;color:var(--dark);background:#fff;line-height:1.6}
-a{text-decoration:none;color:inherit}
-button{font:inherit;cursor:pointer}
-header{
-  position:sticky;top:0;z-index:20;background:#fff;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 6%;box-shadow:0 2px 14px #102b4b12
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--dark);
+  font-family:Inter,Arial,sans-serif;line-height:1.5;
 }
-.logo{font-size:25px;font-weight:900;letter-spacing:1px;color:var(--blue)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+a{color:inherit;text-decoration:none}
+.container{width:min(1120px,92%);margin:auto}
+.topbar{
+  background:white;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:20;
+}
+.nav{
+  min-height:72px;display:flex;align-items:center;
+  justify-content:space-between;gap:15px;
+}
+.logo{font-size:25px;font-weight:900;letter-spacing:-1px;color:var(--blue)}
 .logo span{color:var(--red)}
-nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600}
-nav a:hover{color:var(--blue)}
+.navlinks{display:flex;align-items:center;gap:22px;font-size:14px}
 .btn{
-  display:inline-block;border:0;border-radius:9px;padding:12px 19px;
-  background:var(--blue);color:white;font-weight:700
+  border:0;border-radius:10px;padding:12px 19px;
+  font-weight:750;display:inline-flex;align-items:center;
+  justify-content:center;gap:8px;
 }
-.btn:hover{opacity:.9}
-.btn-red{background:var(--red)}
-.btn-light{background:white;color:var(--blue);border:1px solid #dce8f5}
-.menu{display:none;background:none;border:0;font-size:25px}
+.btn-blue{background:var(--blue);color:white}
+.btn-red{background:var(--red);color:white}
+.btn-light{background:#EAF3FF;color:var(--blue)}
+.btn-white{background:white;color:var(--blue)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 .hero{
-  min-height:520px;padding:85px 7%;display:flex;align-items:center;
-  color:white;position:relative;overflow:hidden;
-  background:linear-gradient(110deg,#061c39ed,#007fff9c),
-  url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1800&q=85') center/cover
+  background:linear-gradient(115deg,#061C39E8,#073B72C9),
+  url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85") center/cover;
+  color:white;padding:100px 0 95px;
 }
-.hero-content{max-width:720px;position:relative;z-index:1}
-.eyebrow{color:var(--yellow);font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:13px}
-.hero h1{font-size:clamp(36px,6vw,64px);line-height:1.12;margin:18px 0}
-.hero p{font-size:18px;max-width:610px;color:#eef5ff;margin-bottom:27px}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
-.hero .btn-light{border:0}
-.flag{display:flex;gap:5px;margin-top:35px}
-.flag i{height:5px;width:35px;border-radius:8px;background:var(--blue)}
-.flag i:nth-child(2){background:var(--yellow)}
-.flag i:nth-child(3){background:var(--red)}
-section{padding:72px 7%}
-.section-head{text-align:center;max-width:720px;margin:0 auto 38px}
-.section-head h2{font-size:32px;margin-bottom:10px}
-.section-head p{color:var(--muted)}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.feature{
-  padding:26px;border:1px solid #e7edf5;border-radius:16px;
-  background:white;box-shadow:0 8px 25px #0d31500a
+.hero-content{max-width:690px}
+.hero h1{font-size:clamp(38px,6vw,66px);line-height:1.08;margin:0 0 22px}
+.hero p{font-size:18px;max-width:590px;color:#EAF2FF}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.flagline{height:6px;background:linear-gradient(90deg,var(--blue) 33%,var(--yellow) 33% 66%,var(--red) 66%)}
+.section{padding:65px 0}
+.section h2{font-size:32px;margin:0 0 12px}
+.section-intro{color:var(--muted);max-width:680px;margin:0 0 30px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feature,.info-card{
+  background:white;border:1px solid var(--border);
+  border-radius:17px;padding:23px;
 }
-.feature .symbol{font-size:30px;margin-bottom:13px}
-.feature h3{font-size:19px;margin-bottom:8px}
-.feature p{font-size:14px;color:var(--muted)}
-.soft{background:var(--light)}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:45px;align-items:center}
-.split h2{font-size:34px;line-height:1.2;margin-bottom:16px}
-.split p{color:var(--muted);margin-bottom:18px}
-.photo{
-  min-height:320px;border-radius:20px;
-  background:linear-gradient(140deg,#007fff30,#ce102150),
-  url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85') center/cover
+.feature .emoji{font-size:30px}
+.feature h3{margin:12px 0 7px}
+.feature p,.muted{color:var(--muted)}
+.about{
+  background:white;border-radius:20px;padding:30px;
+  border:1px solid var(--border);
 }
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.step{background:white;padding:25px;border-radius:15px}
-.number{font-size:28px;font-weight:900;color:var(--red)}
-.step p{color:var(--muted);font-size:14px;margin-top:8px}
-.elsa{
-  background:linear-gradient(120deg,#06264a,#007fff);
-  color:white;border-radius:22px;padding:40px
+.faq-item{padding:18px 0;border-bottom:1px solid var(--border)}
+.faq-item:last-child{border:0}
+footer{background:#10233C;color:#DCE8F8;padding:35px 0;margin-top:35px}
+footer .logo{color:white}
+footer p{color:#B8C8DC}
+
+/* Authentification */
+.modal{
+  position:fixed;inset:0;background:#07182BCC;z-index:100;
+  display:none;align-items:center;justify-content:center;padding:18px;
 }
-.elsa p{color:#e5f1ff;margin:12px 0 22px}
-.cta{text-align:center;background:#fff7dc}
-.cta h2{font-size:32px;margin-bottom:12px}
-.cta p{color:var(--muted);margin-bottom:22px}
-footer{background:#10243d;color:#dce8f5;padding:45px 7% 22px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
-footer h3,footer h4{color:white;margin-bottom:12px}
-footer p,footer a{font-size:14px;color:#c3d2e4}
-footer a{display:block;margin:7px 0}
-footer a:hover{color:var(--yellow)}
-.copyright{border-top:1px solid #ffffff20;margin-top:30px;padding-top:18px;font-size:12px}
-.page{display:none;min-height:65vh;padding:65px 7%}
-.page.active{display:block}
-.page h1{font-size:34px;margin-bottom:18px}
-.page p{color:var(--muted);max-width:800px;margin-bottom:15px}
-.faq-item{padding:18px 0;border-bottom:1px solid #e5edf5}
-.faq-item h3{font-size:17px;margin-bottom:7px}
-@media(max-width:760px){
-  header{padding:12px 5%}
-  nav{display:none;position:absolute;top:62px;left:0;right:0;background:white;padding:20px;flex-direction:column;align-items:stretch;box-shadow:0 8px 15px #0001}
-  nav.open{display:flex}
-  .menu{display:block}
-  .header-cta{display:none}
-  .hero{min-height:520px;padding:65px 6%}
-  .hero p{font-size:16px}
-  section{padding:55px 6%}
-  .features,.steps,.split,.footer-grid{grid-template-columns:1fr}
-  .section-head h2,.split h2,.cta h2{font-size:27px}
-  .photo{min-height:240px}
-  .elsa{padding:28px}
+.modal.open{display:flex}
+.modal-card{
+  background:white;width:min(440px,100%);border-radius:19px;
+  padding:27px;max-height:92vh;overflow:auto;
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center}
+.close-btn{border:0;background:#EEF2F7;border-radius:50%;width:35px;height:35px}
+.field{margin:13px 0}
+.field label{font-size:13px;font-weight:750;display:block;margin-bottom:6px}
+.field input,.field textarea,.field select{
+  width:100%;padding:13px;border:1px solid #D8E0EB;
+  border-radius:9px;background:white;outline:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:var(--blue);box-shadow:0 0 0 3px #007FFF19;
+}
+.form-message{font-size:14px;margin-top:13px;white-space:pre-wrap}
+.form-message.error{color:var(--red)}
+.form-message.success{color:var(--green)}
+.text-link{border:0;background:none;color:var(--blue);font-weight:700;padding:10px 0}
+
+/* Espace entrepreneur */
+#app{min-height:100vh}
+.app-layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 72px)}
+.sidebar{
+  background:#10233C;color:white;padding:24px 16px;
+}
+.side-brand{font-size:22px;font-weight:900;margin:0 10px 28px}
+.side-brand span{color:var(--yellow)}
+.side-label{font-size:11px;color:#9DB1CB;text-transform:uppercase;letter-spacing:1px;margin:20px 10px 8px}
+.side-link{
+  width:100%;border:0;background:transparent;color:#E5EFFB;
+  padding:12px 13px;text-align:left;border-radius:9px;
+  margin:3px 0;display:flex;gap:10px;align-items:center;
+}
+.side-link.active,.side-link:hover{background:#FFFFFF1C;color:white}
+.main-area{padding:28px;min-width:0}
+.app-top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;margin-bottom:25px;
+}
+.app-top h1{font-size:26px;margin:0}
+.user-email{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.welcome{
+  background:linear-gradient(115deg,#0067D9,#004A9E);
+  color:white;padding:27px;border-radius:18px;margin-bottom:23px;
+}
+.welcome h2{margin:0 0 7px;font-size:25px}
+.welcome p{margin:0;color:#E4F1FF}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}
+.stat{
+  background:white;border:1px solid var(--border);
+  padding:19px;border-radius:14px;
+}
+.stat strong{display:block;font-size:25px;color:var(--blue)}
+.stat span{font-size:13px;color:var(--muted)}
+.panel{
+  background:white;border:1px solid var(--border);
+  border-radius:15px;padding:22px;margin-bottom:20px;
+}
+.panel h3{margin:0 0 15px}
+.module-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.module-card{
+  background:white;border:1px solid var(--border);
+  border-radius:13px;padding:17px;text-align:left;
+  color:var(--dark);min-height:125px;
+}
+.module-card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.module-card .emoji{font-size:25px;display:block;margin-bottom:9px}
+.module-card strong{display:block}
+.module-card small{color:var(--muted)}
+.row-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.data-item{
+  padding:14px 0;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;gap:15px;align-items:center;
+}
+.data-item:last-child{border:0}
+.pill{font-size:11px;background:#EAF3FF;color:var(--blue);padding:5px 9px;border-radius:20px}
+.empty{color:var(--muted);padding:15px 0}
+.mobile-menu{display:none}
+.back-btn{border:0;background:#EAF3FF;color:var(--blue);padding:9px 13px;border-radius:8px;font-weight:700}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.small-note{font-size:12px;color:var(--muted)}
+@media(max-width:850px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .module-grid{grid-template-columns:repeat(2,1fr)}
+  .app-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .sidebar.mobile-open{display:block}
+  .mobile-menu{display:inline-flex}
+  .main-area{padding:18px}
+}
+@media(max-width:560px){
+  .navlinks a{display:none}
+  .hero{padding:70px 0}
+  .section{padding:45px 0}
+  .grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .module-grid{grid-template-columns:1fr 1fr}
+  .two-col{grid-template-columns:1fr}
+  .app-top{align-items:flex-start}
+  .app-top h1{font-size:21px}
 }
 </style>
 </head>
-<body>
 
-<header>
-  <a href="#" class="logo" onclick="showPage('home')">ENDELE<span>YA</span></a>
-  <button class="menu" onclick="toggleMenu()" aria-label="Ouvrir le menu">☰</button>
-  <nav id="nav">
-    <a href="#accueil" onclick="showPage('home')">Accueil</a>
-    <a href="#fonctionnalites" onclick="showPage('home')">Fonctionnalités</a>
-    <a href="#comment" onclick="showPage('home')">Comment ça marche</a>
-    <a href="#apropos" onclick="showPage('about')">À propos</a>
-    <a href="#faq" onclick="showPage('faq')">FAQ</a>
-  </nav>
-  <a class="btn header-cta" href="#inscription">Commencer</a>
+<body>
+<div class="flagline"></div>
+
+<header class="topbar" id="public-header">
+  <div class="container nav">
+    <a class="logo" href="#" onclick="showHome()">ENDELE<span>YA</span></a>
+    <nav class="navlinks">
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#apropos">À propos</a>
+      <a href="#faq">FAQ</a>
+      <button class="btn btn-blue" onclick="openAuth('login')">Mon espace</button>
+    </nav>
+    <button class="btn btn-blue mobile-menu" onclick="openAuth('login')">Mon espace</button>
+  </div>
 </header>
 
-<main id="home">
-<section class="hero" id="accueil">
-  <div class="hero-content">
-    <div class="eyebrow">L'entrepreneuriat congolais à portée de main</div>
-    <h1>Ton activité mérite de grandir.</h1>
-    <p>Présente ton entreprise, trouve des clients, organise ton activité et développe tes revenus avec une plateforme pensée pour les entrepreneurs d'ici.</p>
-    <div class="hero-actions">
-      <a class="btn" href="#inscription">Créer mon espace</a>
-      <a class="btn btn-light" href="#fonctionnalites">Découvrir ENDELEYA</a>
+<!-- PAGE PUBLIQUE -->
+<main id="home-page">
+  <section class="hero">
+    <div class="container hero-content">
+      <p style="color:#F7D116;font-weight:800;letter-spacing:2px">LA PLATEFORME DES ENTREPRENEURS</p>
+      <h1>Ton activité mérite d'aller plus loin.</h1>
+      <p>Présente ton entreprise, organise ton activité et développe tes opportunités avec ENDELEYA.</p>
+      <div class="hero-actions">
+        <button class="btn btn-blue" onclick="openAuth('signup')">Créer mon compte gratuitement</button>
+        <button class="btn btn-white" onclick="openAuth('login')">J'ai déjà un compte</button>
+      </div>
     </div>
-    <div class="flag"><i></i><i></i><i></i></div>
-  </div>
-</section>
+  </section>
 
-<section id="fonctionnalites">
-  <div class="section-head">
-    <div class="eyebrow" style="color:#007FFF">Une plateforme, plusieurs possibilités</div>
-    <h2>Tout pour faire avancer ton business</h2>
-    <p>ENDELEYA réunit les outils essentiels pour rendre ton activité plus visible, mieux organisée et plus performante.</p>
-  </div>
-  <div class="features">
-    <article class="feature">
-      <div class="symbol">🏪</div>
-      <h3>Ta vitrine professionnelle</h3>
-      <p>Présente ton entreprise, tes produits et tes services sur une page que tu peux partager avec tes clients.</p>
-    </article>
-    <article class="feature">
-      <div class="symbol">📊</div>
-      <h3>Gestion de ton activité</h3>
-      <p>Organise tes ventes, tes dépenses, tes clients, tes commandes et ton stock au même endroit.</p>
-    </article>
-    <article class="feature">
-      <div class="symbol">🤖</div>
-      <h3>ELSA, ton assistante intelligente</h3>
-      <p>Prépare tes contenus, trouve des idées, analyse tes besoins et accompagne tes décisions.</p>
-    </article>
-    <article class="feature">
-      <div class="symbol">📣</div>
-      <h3>Marketing et visibilité</h3>
-      <p>Prépare tes campagnes, planifie tes publications et valorise tes offres.</p>
-    </article>
-    <article class="feature">
-      <div class="symbol">💰</div>
-      <h3>Suivi des revenus</h3>
-      <p>Comprends tes entrées et sorties d'argent pour mieux piloter ton entreprise.</p>
-    </article>
-    <article class="feature">
-      <div class="symbol">🌍</div>
-      <h3>Découverte des entreprises</h3>
-      <p>Explore les activités, les produits et les services proposés par les entrepreneurs.</p>
-    </article>
-  </div>
-</section>
-
-<section class="soft">
-  <div class="split">
-    <div>
-      <div class="eyebrow" style="color:#007FFF">Vitrine ya Mboka</div>
-      <h2>Fais connaître ton activité au-delà de ton quartier.</h2>
-      <p>Crée une présence professionnelle en ligne. Montre ce que tu proposes, ajoute tes coordonnées et facilite le contact avec tes futurs clients.</p>
-      <a class="btn" href="#inscription">Présenter mon entreprise</a>
+  <section class="section" id="fonctionnalites">
+    <div class="container">
+      <h2>Tout pour faire avancer ton business.</h2>
+      <p class="section-intro">Une plateforme pensée pour les réalités des entrepreneurs et des petites entreprises en RDC et en Afrique.</p>
+      <div class="grid">
+        <div class="feature"><div class="emoji">🏢</div><h3>Vitrine ya Mboka</h3><p>Présente ton entreprise et rends tes activités visibles en ligne.</p></div>
+        <div class="feature"><div class="emoji">🛍️</div><h3>Offres et produits</h3><p>Organise tes produits et services avec leurs prix et leurs descriptions.</p></div>
+        <div class="feature"><div class="emoji">👥</div><h3>Clients et contacts</h3><p>Centralise les informations utiles pour suivre tes relations commerciales.</p></div>
+        <div class="feature"><div class="emoji">💰</div><h3>Gestion des revenus</h3><p>Prépare le suivi de tes ventes, dépenses et performances.</p></div>
+        <div class="feature"><div class="emoji">📣</div><h3>Marketing</h3><p>Structure tes actions pour mieux faire connaître ton activité.</p></div>
+        <div class="feature"><div class="emoji">🤖</div><h3>ELSA</h3><p>Une assistante intelligente conçue pour accompagner les entrepreneurs.</p></div>
+      </div>
     </div>
-    <div class="photo" role="img" aria-label="Paysage naturel africain"></div>
-  </div>
-</section>
+  </section>
 
-<section id="comment">
-  <div class="section-head">
-    <h2>Commencer est simple</h2>
-    <p>Quelques étapes pour donner une nouvelle dimension à ton activité.</p>
-  </div>
-  <div class="steps">
-    <article class="step">
-      <div class="number">01</div>
-      <h3>Crée ton compte</h3>
-      <p>Inscris-toi et renseigne les informations essentielles de ton profil.</p>
-    </article>
-    <article class="step">
-      <div class="number">02</div>
-      <h3>Présente ton business</h3>
-      <p>Ajoute ton entreprise, tes produits ou tes services et tes coordonnées.</p>
-    </article>
-    <article class="step">
-      <div class="number">03</div>
-      <h3>Développe ton activité</h3>
-      <p>Utilise les outils de gestion et l'accompagnement d'ELSA pour avancer.</p>
-    </article>
-  </div>
-</section>
+  <section class="section" id="apropos" style="background:#EAF2FC">
+    <div class="container">
+      <div class="about">
+        <h2>À propos d'ENDELEYA</h2>
+        <p>ENDELEYA est une plateforme entrepreneuriale qui aide les entrepreneurs à présenter leurs activités, structurer leur organisation et développer leur présence commerciale.</p>
+        <p>Notre ambition : rendre les outils de développement accessibles et utiles, en tenant compte des réalités du terrain.</p>
+        <h3 style="color:var(--blue)">Avance. Développe. Réussis.</h3>
+      </div>
+    </div>
+  </section>
 
-<section>
-  <div class="elsa">
-    <div class="eyebrow">Ton copilote intelligent</div>
-    <h2>Découvre ELSA</h2>
-    <p>Une assistante intelligente intégrée à ENDELEYA pour t'aider à réfléchir, créer, organiser et prendre de meilleures décisions pour ton activité.</p>
-    <a class="btn btn-light" href="#inscription">Découvrir ENDELEYA</a>
-  </div>
-</section>
-
-<section class="cta" id="inscription">
-  <h2>Ton prochain pas commence ici.</h2>
-  <p>Rejoins ENDELEYA et prépare ton entreprise à de nouvelles possibilités.</p>
-  <button class="btn btn-red" onclick="alert('La création de compte sera activée lors de la connexion à Supabase.')">Créer mon compte</button>
-</section>
+  <section class="section" id="faq">
+    <div class="container">
+      <h2>Questions fréquentes</h2>
+      <div class="about">
+        <div class="faq-item"><strong>Qui peut utiliser ENDELEYA ?</strong><p class="muted">Les entrepreneurs, commerçants, prestataires de services et porteurs de projets.</p></div>
+        <div class="faq-item"><strong>Comment commencer ?</strong><p class="muted">Crée un compte, connecte-toi et configure ton espace entrepreneur.</p></div>
+        <div class="faq-item"><strong>Dois-je avoir une entreprise enregistrée ?</strong><p class="muted">Tu peux commencer à présenter ton activité et structurer ton projet.</p></div>
+        <div class="faq-item"><strong>Comment accéder à mon espace ?</strong><p class="muted">Clique sur « Mon espace », puis connecte-toi avec ton adresse e-mail et ton mot de passe.</p></div>
+      </div>
+    </div>
+  </section>
 </main>
 
-<section class="page" id="about">
-  <div class="eyebrow" style="color:#007FFF">Notre vision</div>
-  <h1>À propos d'ENDELEYA</h1>
-  <p>ENDELEYA est une plateforme conçue pour accompagner les entrepreneurs dans la présentation, l'organisation et le développement de leurs activités.</p>
-  <p>Notre ambition est de rendre les outils numériques plus accessibles aux entrepreneurs congolais et africains, quels que soient leur secteur et la taille de leur entreprise.</p>
-  <p>Nous réunissons une vitrine professionnelle, des outils de gestion et un assistant intelligent dans un même espace.</p>
-  <h2>Notre engagement</h2>
-  <p>Donner aux entrepreneurs les moyens de mieux présenter leur travail, de mieux gérer leurs activités et de saisir de nouvelles opportunités.</p>
-  <h2>Notre devise</h2>
-  <p><strong>Avance. Développe. Réussis.</strong></p>
-</section>
-
-<section class="page" id="faq">
-  <div class="eyebrow" style="color:#007FFF">Besoin d'aide ?</div>
-  <h1>Questions fréquentes</h1>
-  <div class="faq-item">
-    <h3>Qu'est-ce qu'ENDELEYA ?</h3>
-    <p>Une plateforme qui aide les entrepreneurs à présenter, organiser et développer leur activité.</p>
+<footer id="public-footer">
+  <div class="container">
+    <div class="logo">ENDELE<span>YA</span></div>
+    <p>Avance. Développe. Réussis.</p>
+    <p>© 2026 ENDELEYA. Tous droits réservés.</p>
   </div>
-  <div class="faq-item">
-    <h3>Qui peut utiliser ENDELEYA ?</h3>
-    <p>Les commerçants, artisans, prestataires de services, producteurs et autres entrepreneurs.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Puis-je présenter plusieurs entreprises ?</h3>
-    <p>La plateforme est conçue pour permettre à un compte de gérer plusieurs activités, selon les limites de son abonnement.</p>
-  </div>
-  <div class="faq-item">
-    <h3>ELSA est-elle intégrée à ENDELEYA ?</h3>
-    <p>Oui. ELSA est l'assistante intelligente prévue pour accompagner les utilisateurs dans leurs activités.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Comment contacter une entreprise ?</h3>
-    <p>Les vitrines professionnelles pourront afficher les coordonnées et les moyens de contact renseignés par chaque entreprise.</p>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-grid">
-    <div>
-      <h3 class="logo" style="color:white">ENDELE<span>YA</span></h3>
-      <p>La plateforme qui accompagne les entrepreneurs vers de nouvelles possibilités.</p>
-      <p style="margin-top:12px;color:#F7D116;font-weight:bold">Avance. Développe. Réussis.</p>
-    </div>
-    <div>
-      <h4>Explorer</h4>
-      <a href="#fonctionnalites" onclick="showPage('home')">Fonctionnalités</a>
-      <a href="#comment" onclick="showPage('home')">Comment ça marche</a>
-      <a href="#inscription" onclick="showPage('home')">Créer un compte</a>
-    </div>
-    <div>
-      <h4>Informations</h4>
-      <a href="#apropos" onclick="showPage('about')">À propos de nous</a>
-      <a href="#faq" onclick="showPage('faq')">FAQ</a>
-    </div>
-  </div>
-  <div class="copyright">© 2026 ENDELEYA. Tous droits réservés.</div>
 </footer>
 
-<script>
-function toggleMenu(){
-  document.getElementById('nav').classList.toggle('open');
-}
-function showPage(page){
-  document.getElementById('home').style.display=page==='home'?'block':'none';
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  if(page!=='home'){
-    document.getElementById(page).classList.add('active');
-    window.scrollTo(0,0);
-  }
-  document.getElementById('nav').classList.remove('open');
-}
-</script>
-  
-<!-- ENDELEYA : connexion Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- FENÊTRE D'AUTHENTIFICATION -->
+<div class="modal" id="auth-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="logo">ENDELE<span>YA</span></div>
+      <button class="close-btn" onclick="closeAuth()">✕</button>
+    </div>
+    <h2 id="auth-title">Créer mon compte</h2>
+    <p class="muted" id="auth-description">Rejoins ENDELEYA et commence à développer ton activité.</p>
 
-<style>
-#endeleya-auth-button {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 9998;
-  background: #007FFF;
-  color: white;
-  border: 0;
-  border-radius: 30px;
-  padding: 14px 22px;
-  font-weight: bold;
-  cursor: pointer;
-}
-#endeleya-auth-panel {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #0009;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  font-family: Arial, sans-serif;
-}
-#endeleya-auth-card {
-  background: white;
-  color: #222;
-  width: 100%;
-  max-width: 390px;
-  padding: 25px;
-  border-radius: 16px;
-  box-sizing: border-box;
-}
-#endeleya-auth-card input {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 13px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 15px;
-}
-#endeleya-auth-card button {
-  padding: 12px;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-#endeleya-auth-submit {
-  width: 100%;
-  background: #007FFF;
-  color: white;
-  margin-top: 8px;
-}
-#endeleya-auth-switch {
-  background: transparent;
-  color: #007FFF;
-  margin-top: 12px;
-}
-#endeleya-auth-close {
-  float: right;
-  background: #eee;
-  color: #333;
-}
-#endeleya-auth-message {
-  font-size: 14px;
-  line-height: 1.5;
-  margin-top: 12px;
-}
-</style>
-
-<button id="endeleya-auth-button">Mon espace</button>
-
-<div id="endeleya-auth-panel">
-  <div id="endeleya-auth-card">
-    <button id="endeleya-auth-close" type="button">Fermer ✕</button>
-
-    <h2 id="endeleya-auth-title">Créer mon compte</h2>
-    <p>Bienvenue sur ENDELEYA. Accède à ton espace entrepreneur.</p>
-
-    <form id="endeleya-auth-form">
-      <input id="endeleya-fullname" type="text"
-        placeholder="Nom complet" required>
-
-      <input id="endeleya-email" type="email"
-        placeholder="Adresse e-mail" required>
-
-      <input id="endeleya-password" type="password"
-        placeholder="Mot de passe (6 caractères minimum)"
-        minlength="6" required>
-
-      <button id="endeleya-auth-submit" type="submit">
-        Créer mon compte
-      </button>
+    <form id="auth-form">
+      <div class="field" id="fullname-field">
+        <label for="auth-name">Nom complet</label>
+        <input id="auth-name" type="text" placeholder="Ton nom complet" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="auth-email">Adresse e-mail</label>
+        <input id="auth-email" type="email" placeholder="exemple@email.com" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="auth-password">Mot de passe</label>
+        <input id="auth-password" type="password" placeholder="6 caractères minimum" minlength="6" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn-blue" id="auth-submit" type="submit" style="width:100%">Créer mon compte</button>
     </form>
+    <div class="form-message" id="auth-message" role="status"></div>
+    <button class="text-link" id="auth-switch" onclick="switchAuthMode()">J'ai déjà un compte : me connecter</button>
+  </div>
+</div>
 
-    <button id="endeleya-auth-switch" type="button">
-      J'ai déjà un compte : me connecter
-    </button>
+<!-- APPLICATION CONNECTÉE -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="container nav">
+      <a class="logo" href="#" onclick="goToSection('dashboard')">ENDELE<span>YA</span></a>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="user-email" id="top-user-email"></span>
+        <button class="btn btn-light" onclick="logout()">Déconnexion</button>
+      </div>
+    </div>
+  </header>
 
-    <div id="endeleya-auth-message" role="status"></div>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-brand">ENDELE<span>YA</span></div>
+      <div class="side-label">Mon espace</div>
+      <button class="side-link active" data-section="dashboard" onclick="goToSection('dashboard')">🏠 Tableau de bord</button>
+      <button class="side-link" data-section="business" onclick="goToSection('business')">🏢 Mon Business</button>
+      <button class="side-link" data-section="offers" onclick="goToSection('offers')">🛍️ Offres et produits</button>
+      <button class="side-link" data-section="customers" onclick="goToSection('customers')">👥 Mes contacts</button>
+      <button class="side-link" data-section="revenues" onclick="goToSection('revenues')">💰 Revenus</button>
+      <button class="side-link" data-section="marketing" onclick="goToSection('marketing')">📣 Marketing</button>
+      <button class="side-link" data-section="content" onclick="goToSection('content')">📝 Contenu</button>
+      <button class="side-link" data-section="elsa" onclick="goToSection('elsa')">🤖 ELSA</button>
+      <button class="side-link" data-section="profile" onclick="goToSection('profile')">👤 Mon profil</button>
+      <div class="side-label">Compte</div>
+      <button class="side-link" onclick="logout()">↪ Se déconnecter</button>
+    </aside>
+
+    <main class="main-area">
+      <div class="app-top">
+        <div>
+          <h1 id="section-title">Tableau de bord</h1>
+          <div class="user-email" id="welcome-email"></div>
+        </div>
+        <button class="back-btn mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('mobile-open')">☰ Menu</button>
+      </div>
+
+      <section id="section-dashboard">
+        <div class="welcome">
+          <h2>Bienvenue sur ENDELEYA 👋</h2>
+          <p>Ton espace entrepreneur est prêt. Commence par présenter ton activité.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><strong id="business-count">0</strong><span>Entreprise(s)</span></div>
+          <div class="stat"><strong id="offer-count">0</strong><span>Offres enregistrées</span></div>
+          <div class="stat"><strong>ELSA</strong><span>Assistante intelligente</span></div>
+        </div>
+        <div class="panel">
+          <h3>Que souhaites-tu faire aujourd'hui ?</h3>
+          <div class="module-grid">
+            <button class="module-card" onclick="goToSection('business')"><span class="emoji">🏢</span><strong>Mon Business</strong><small>Créer ma vitrine</small></button>
+            <button class="module-card" onclick="goToSection('offers')"><span class="emoji">🛍️</span><strong>Mes offres</strong><small>Ajouter un produit ou service</small></button>
+            <button class="module-card" onclick="goToSection('customers')"><span class="emoji">👥</span><strong>Mes contacts</strong><small>Gestion des clients</small></button>
+            <button class="module-card" onclick="goToSection('revenues')"><span class="emoji">💰</span><strong>Mes revenus</strong><small>Suivi financier</small></button>
+            <button class="module-card" onclick="goToSection('marketing')"><span class="emoji">📣</span><strong>Marketing</strong><small>Développer ma visibilité</small></button>
+            <button class="module-card" onclick="goToSection('content')"><span class="emoji">📝</span><strong>Contenu</strong><small>Organiser mes publications</small></button>
+            <button class="module-card" onclick="goToSection('elsa')"><span class="emoji">🤖</span><strong>ELSA</strong><small>Mon assistante IA</small></button>
+            <button class="module-card" onclick="goToSection('profile')"><span class="emoji">👤</span><strong>Mon profil</strong><small>Mes informations</small></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENTREPRISE -->
+      <section id="section-business" class="hidden">
+        <div class="panel">
+          <h3>Créer mon entreprise</h3>
+          <p class="muted">Présente ton activité sur ENDELEYA. Tu pourras compléter ta vitrine progressivement.</p>
+          <form id="business-form">
+            <div class="two-col">
+              <div class="field"><label>Nom de l'entreprise *</label><input id="business-name" required maxlength="100" placeholder="Ex. Ma boutique"></div>
+              <div class="field"><label>Secteur d'activité *</label>
+                <select id="business-category" required>
+                  <option value="">Choisir un secteur</option>
+                  <option>Commerce</option><option>Alimentation</option><option>Mode et beauté</option>
+                  <option>Technologie</option><option>Transport et logistique</option>
+                  <option>Artisanat</option><option>Agriculture</option><option>Éducation</option>
+                  <option>Santé et bien-être</option><option>Services</option><option>Tourisme</option>
+                  <option>Autre</option>
+                </select>
+              </div>
+            </div>
+            <div class="field"><label>Description de l'activité</label><textarea id="business-description" rows="3" placeholder="Que proposes-tu à tes clients ?"></textarea></div>
+            <div class="two-col">
+              <div class="field"><label>Province</label><input id="business-province" placeholder="Ex. Haut-Katanga"></div>
+              <div class="field"><label>Ville</label><input id="business-city" placeholder="Ex. Lubumbashi"></div>
+            </div>
+            <div class="two-col">
+              <div class="field"><label>WhatsApp</label><input id="business-whatsapp" placeholder="+243..."></div>
+              <div class="field"><label>E-mail professionnel</label><input id="business-email" type="email" placeholder="contact@entreprise.com"></div>
+            </div>
+            <div class="field"><label>Adresse (facultatif)</label><input id="business-address" placeholder="Quartier, avenue..."></div>
+            <button class="btn btn-blue" id="business-submit">Enregistrer mon entreprise</button>
+            <div class="form-message" id="business-message"></div>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Mes entreprises</h3>
+          <div id="business-list" class="empty">Chargement...</div>
+        </div>
+      </section>
+
+      <!-- OFFRES -->
+      <section id="section-offers" class="hidden">
+        <div class="panel">
+          <h3>Ajouter un produit ou un service</h3>
+          <form id="offer-form">
+            <div class="field"><label>Entreprise concernée *</label><select id="offer-business" required><option value="">Choisir une entreprise</option></select></div>
+            <div class="two-col">
+              <div class="field"><label>Type *</label><select id="offer-type" required><option value="product">Produit</option><option value="service">Service</option></select></div>
+              <div class="field"><label>Nom *</label><input id="offer-name" required maxlength="100" placeholder="Nom du produit ou service"></div>
+            </div>
+            <div class="field"><label>Description</label><textarea id="offer-description" rows="3" placeholder="Décris ton offre"></textarea></div>
+            <div class="two-col">
+              <div class="field"><label>Prix</label><input id="offer-price" type="number" min="0" step="0.01" placeholder="0"></div>
+              <div class="field"><label>Devise</label><select id="offer-currency"><option value="CDF">Franc congolais (CDF)</option><option value="USD">Dollar américain (USD)</option></select></div>
+            </div>
+            <button class="btn btn-blue" id="offer-submit">Enregistrer l'offre</button>
+            <div class="form-message" id="offer-message"></div>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Mes produits et services</h3>
+          <div id="offer-list" class="empty">Chargement...</div>
+        </div>
+      </section>
+
+      <!-- AUTRES MODULES -->
+      <section id="section-customers" class="hidden">
+        <div class="panel"><h3>Mes contacts</h3><p class="muted">Cet espace accueillera la gestion des clients, prospects et coordonnées commerciales. Le module sera connecté à la base de données dans la prochaine intégration.</p></div>
+      </section>
+      <section id="section-revenues" class="hidden">
+        <div class="panel"><h3>Mes revenus</h3><p class="muted">Le suivi des ventes, dépenses, recettes et résultats sera disponible ici. Les données financières seront reliées à tes opérations.</p></div>
+      </section>
+      <section id="section-marketing" class="hidden">
+        <div class="panel"><h3>Marketing</h3><p class="muted">Cet espace accueillera tes campagnes, actions promotionnelles et stratégies de développement commercial.</p></div>
+      </section>
+      <section id="section-content" class="hidden">
+        <div class="panel"><h3>Mon contenu</h3><p class="muted">Tu pourras organiser tes idées, publications, calendriers et contenus marketing ici.</p></div>
+      </section>
+      <section id="section-elsa" class="hidden">
+        <div class="panel">
+          <h3>🤖 ELSA – Ton assistante intelligente</h3>
+          <p>ELSA est l'assistante entrepreneuriale d'ENDELEYA. Elle t'accompagnera dans tes idées, ta communication et le développement de ton activité.</p>
+          <p class="muted">Le service de conversation IA sera activé après la connexion de son moteur intelligent sécurisé.</p>
+        </div>
+      </section>
+
+      <!-- PROFIL -->
+      <section id="section-profile" class="hidden">
+        <div class="panel">
+          <h3>Mon profil</h3>
+          <form id="profile-form">
+            <div class="field"><label>Nom complet</label><input id="profile-name" maxlength="120"></div>
+            <div class="field"><label>Téléphone</label><input id="profile-phone" placeholder="+243..."></div>
+            <div class="two-col">
+              <div class="field"><label>Province</label><input id="profile-province"></div>
+              <div class="field"><label>Ville</label><input id="profile-city"></div>
+            </div>
+            <div class="field"><label>Adresse e-mail du compte</label><input id="profile-email" disabled></div>
+            <button class="btn btn-blue" id="profile-submit">Enregistrer mon profil</button>
+            <div class="form-message" id="profile-message"></div>
+          </form>
+        </div>
+      </section>
+
+    </main>
   </div>
 </div>
 
 <script>
-(() => {
-  const SUPABASE_URL =
-    "https://omwdabkrnkpyxhsohtol.supabase.co";
+/* CONFIGURATION SUPABASE */
+const SUPABASE_URL = "https://omwdabkrnkpyxhsohtol.supabase.co";
+const SUPABASE_KEY = "sb_publishable_G0cficld3B6oVyeE6_rSLQ_MG-fpXZG";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const SUPABASE_KEY =
-    "sb_publishable_G0cficld3B6oVyeE6_rSLQ_MG-fpXZG";
+let currentUser = null;
+let currentProfile = null;
+let businesses = [];
+let offers = [];
+let authMode = "signup";
 
-  const client = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const $ = id => document.getElementById(id);
 
-  const panel = document.getElementById("endeleya-auth-panel");
-  const form = document.getElementById("endeleya-auth-form");
-  const title = document.getElementById("endeleya-auth-title");
-  const submit = document.getElementById("endeleya-auth-submit");
-  const switchButton = document.getElementById("endeleya-auth-switch");
-  const message = document.getElementById("endeleya-auth-message");
-  const fullname = document.getElementById("endeleya-fullname");
-  const email = document.getElementById("endeleya-email");
-  const password = document.getElementById("endeleya-password");
+function message(id, text, type="") {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = "form-message " + type;
+}
+function slugify(value) {
+  return value.toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-|-$/g,"");
+}
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[c]);
+}
+function showHome() {
+  $("home-page").classList.remove("hidden");
+  $("public-header").classList.remove("hidden");
+  $("public-footer").classList.remove("hidden");
+  $("app").classList.add("hidden");
+}
+function showApp() {
+  $("home-page").classList.add("hidden");
+  $("public-header").classList.add("hidden");
+  $("public-footer").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("top-user-email").textContent = currentUser?.email || "";
+  $("welcome-email").textContent = currentUser?.email || "";
+}
+function openAuth(mode="login") {
+  authMode = mode;
+  $("auth-modal").classList.add("open");
+  updateAuthMode();
+}
+function closeAuth() {
+  $("auth-modal").classList.remove("open");
+  message("auth-message","");
+}
+function updateAuthMode() {
+  const signup = authMode === "signup";
+  $("auth-title").textContent = signup ? "Créer mon compte" : "Connexion à ENDELEYA";
+  $("auth-description").textContent = signup
+    ? "Rejoins ENDELEYA et commence à développer ton activité."
+    : "Connecte-toi pour retrouver ton espace entrepreneur.";
+  $("fullname-field").classList.toggle("hidden",!signup);
+  $("auth-name").required = signup;
+  $("auth-submit").textContent = signup ? "Créer mon compte" : "Me connecter";
+  $("auth-switch").textContent = signup
+    ? "J'ai déjà un compte : me connecter"
+    : "Je n'ai pas encore de compte : m'inscrire";
+  $("auth-password").autocomplete = signup ? "new-password" : "current-password";
+}
+function switchAuthMode() {
+  authMode = authMode === "signup" ? "login" : "signup";
+  updateAuthMode();
+  message("auth-message","");
+}
 
-  let isSignup = true;
+/* INSCRIPTION ET CONNEXION */
+$("auth-form").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("auth-submit");
+  button.disabled = true;
+  message("auth-message","Connexion en cours...");
 
-  document.getElementById("endeleya-auth-button").onclick = () => {
-    panel.style.display = "flex";
-  };
+  try {
+    const email = $("auth-email").value.trim();
+    const password = $("auth-password").value;
 
-  document.getElementById("endeleya-auth-close").onclick = () => {
-    panel.style.display = "none";
-  };
+    if (authMode === "signup") {
+      const fullName = $("auth-name").value.trim();
+      if (!fullName) throw new Error("Entre ton nom complet.");
 
-  switchButton.onclick = () => {
-    isSignup = !isSignup;
+      const {data,error} = await db.auth.signUp({
+        email,password,
+        options:{
+          data:{full_name:fullName},
+          emailRedirectTo:window.location.origin
+        }
+      });
+      if (error) throw error;
 
-    title.textContent = isSignup
-      ? "Créer mon compte"
-      : "Connexion";
-
-    fullname.style.display = isSignup ? "block" : "none";
-    fullname.required = isSignup;
-
-    submit.textContent = isSignup
-      ? "Créer mon compte"
-      : "Me connecter";
-
-    switchButton.textContent = isSignup
-      ? "J'ai déjà un compte : me connecter"
-      : "Créer un nouveau compte";
-
-    message.textContent = "";
-  };
-
-  form.onsubmit = async (event) => {
-    event.preventDefault();
-    message.textContent = "Traitement en cours...";
-    submit.disabled = true;
-
-    try {
-      let result;
-
-      if (isSignup) {
-        result = await client.auth.signUp({
-          email: email.value.trim(),
-          password: password.value,
-          options: {
-            data: {
-              full_name: fullname.value.trim()
-            }
-          }
-        });
+      if (data.session) {
+        closeAuth();
+        currentUser = data.user;
+        await enterApp();
       } else {
-        result = await client.auth.signInWithPassword({
-          email: email.value.trim(),
-          password: password.value
-        });
+        message("auth-message",
+          "Ton compte a été créé. Vérifie ta boîte e-mail et clique sur le lien de confirmation avant de te connecter.",
+          "success");
+        authMode = "login";
+        updateAuthMode();
       }
-
-      if (result.error) throw result.error;
-
-      if (isSignup && !result.data.session) {
-        message.textContent =
-          "Compte créé. Vérifie ta boîte e-mail pour confirmer ton inscription.";
-      } else {
-        message.textContent =
-          "Connexion réussie ! Ton compte ENDELEYA est actif.";
-
-        title.textContent = "Bienvenue sur ENDELEYA";
-        form.style.display = "none";
-        switchButton.style.display = "none";
-      }
-    } catch (error) {
-      message.textContent = "Erreur : " + error.message;
-    } finally {
-      submit.disabled = false;
+    } else {
+      const {data,error} = await db.auth.signInWithPassword({email,password});
+      if (error) throw error;
+      currentUser = data.user;
+      closeAuth();
+      await enterApp();
     }
+  } catch(error) {
+    message("auth-message",error.message || "Une erreur est survenue.","error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* SESSION ET NAVIGATION */
+async function enterApp() {
+  if (!currentUser) return;
+  showApp();
+  await loadProfile();
+  await loadBusinesses();
+  await loadOffers();
+  goToSection("dashboard");
+}
+function goToSection(name) {
+  const sections = ["dashboard","business","offers","customers","revenues","marketing","content","elsa","profile"];
+  sections.forEach(s => {
+    $("section-"+s).classList.toggle("hidden",s !== name);
+  });
+  document.querySelectorAll(".side-link[data-section]").forEach(btn => {
+    btn.classList.toggle("active",btn.dataset.section === name);
+  });
+  const titles = {
+    dashboard:"Tableau de bord",business:"Mon Business",offers:"Mes offres",
+    customers:"Mes contacts",revenues:"Mes revenus",marketing:"Marketing",
+    content:"Mon contenu",elsa:"ELSA",profile:"Mon profil"
   };
-
-  client.auth.getSession().then(({ data }) => {
-    if (data.session) {
-      document.getElementById("endeleya-auth-button").textContent =
-        "Mon compte connecté";
+  $("section-title").textContent = titles[name] || "Mon espace";
+  $("sidebar").classList.remove("mobile-open");
+  if (name === "business") loadBusinesses();
+  if (name === "offers") {loadBusinesses();loadOffers();}
+}
+async function logout() {
+  const {error} = await db.auth.signOut();
+  if (error) {
+    alert("Impossible de se déconnecter : "+error.message);
+    return;
+  }
+  currentUser = null;
+  currentProfile = null;
+  businesses = [];
+  offers = [];
+  showHome();
+}
+db.auth.onAuthStateChange((event,session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    if ($("app").classList.contains("hidden")) {
+      setTimeout(() => enterApp(),0);
     }
-  });
-
-  client.auth.onAuthStateChange((event, session) => {
-    if (session) {
-      document.getElementById("endeleya-auth-button").textContent =
-        "Mon compte connecté";
-    }
-  });
+  } else if (event === "SIGNED_OUT") {
+    currentUser = null;
+    showHome();
+  }
+});
+(async function init() {
+  const {data,error} = await db.auth.getSession();
+  if (error) {
+    console.error(error);
+    return;
+  }
+  if (data.session?.user) {
+    currentUser = data.session.user;
+    await enterApp();
+  } else {
+    showHome();
+  }
 })();
-</script>
 
+/* PROFIL */
+async function loadProfile() {
+  if (!currentUser) return;
+  const {data,error} = await db.from("profiles")
+    .select("id,full_name,phone,city,province")
+    .eq("id",currentUser.id).maybeSingle();
+
+  if (error) {
+    console.error("Profil :",error.message);
+    return;
+  }
+  currentProfile = data || {};
+  $("profile-name").value = currentProfile.full_name || currentUser.user_metadata?.full_name || "";
+  $("profile-phone").value = currentProfile.phone || "";
+  $("profile-city").value = currentProfile.city || "";
+  $("profile-province").value = currentProfile.province || "";
+  $("profile-email").value = currentUser.email || "";
+}
+$("profile-form").addEventListener("submit",async event => {
+  event.preventDefault();
+  const button = $("profile-submit");
+  button.disabled = true;
+  message("profile-message","Enregistrement...");
+  try {
+    const payload = {
+      id:currentUser.id,
+      full_name:$("profile-name").value.trim(),
+      phone:$("profile-phone").value.trim(),
+      city:$("profile-city").value.trim(),
+      province:$("profile-province").value.trim()
+    };
+    const {error} = await db.from("profiles").upsert(payload,{onConflict:"id"});
+    if (error) throw error;
+    message("profile-message","Ton profil a été enregistré.","success");
+    await loadProfile();
+  } catch(error) {
+    message("profile-message",error.message,"error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* ENTREPRISES */
+async function loadBusinesses() {
+  if (!currentUser) return;
+  const list = $("business-list");
+  list.textContent = "Chargement...";
+  const {data,error} = await db.from("businesses")
+    .select("id,name,slug,description,category,province,city,whatsapp,email,status,created_at")
+    .eq("owner_id",currentUser.id)
+    .order("created_at",{ascending:false});
+
+  if (error) {
+    list.textContent = "Impossible de charger les entreprises : "+error.message;
+    return;
+  }
+  businesses = data || [];
+  $("business-count").textContent = businesses.length;
+  renderBusinesses();
+  updateBusinessSelect();
+}
+function renderBusinesses() {
+  const list = $("business-list");
+  if (!businesses.length) {
+    list.innerHTML = '<div class="empty">Tu n’as pas encore enregistré d’entreprise. Crée ta première vitrine ci-dessus.</div>';
+    return;
+  }
+  list.innerHTML = businesses.map(b => `
+    <div class="data-item">
+      <div>
+        <strong>${escapeHTML(b.name)}</strong>
+        <div class="small-note">${escapeHTML(b.category || "Activité")} · ${escapeHTML(b.city || "")} ${escapeHTML(b.province || "")}</div>
+      </div>
+      <span class="pill">${escapeHTML(b.status || "draft")}</span>
+    </div>
+  `).join("");
+}
+$("business-form").addEventListener("submit",async event => {
+  event.preventDefault();
+  const button = $("business-submit");
+  button.disabled = true;
+  message("business-message","Enregistrement de ton entreprise...");
+  try {
+    const name = $("business-name").value.trim();
+    const slug = slugify(name)+"-"+Math.random().toString(36).slice(2,7);
+    const payload = {
+      owner_id:currentUser.id,
+      name,
+      slug,
+      category:$("business-category").value,
+      description:$("business-description").value.trim(),
+      country:"République démocratique du Congo",
+      province:$("business-province").value.trim(),
+      city:$("business-city").value.trim(),
+      whatsapp:$("business-whatsapp").value.trim(),
+      email:$("business-email").value.trim(),
+      address:$("business-address").value.trim(),
+      status:"draft"
+    };
+    const {error} = await db.from("businesses").insert(payload);
+    if (error) throw error;
+    message("business-message","Entreprise enregistrée avec succès !","success");
+    $("business-form").reset();
+    await loadBusinesses();
+  } catch(error) {
+    message("business-message",error.message,"error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* LISTE DES ENTREPRISES DANS LE FORMULAIRE OFFRE */
+function updateBusinessSelect() {
+  const select = $("offer-business");
+  const previous = select.value;
+  select.innerHTML = '<option value="">Choisir une entreprise</option>' +
+    businesses.map(b => `<option value="${escapeHTML(b.id)}">${escapeHTML(b.name)}</option>`).join("");
+  if (businesses.some(b => b.id === previous)) select.value = previous;
+}
+
+/* PRODUITS ET SERVICES */
+async function loadOffers() {
+  if (!currentUser) return;
+  const list = $("offer-list");
+  list.textContent = "Chargement...";
+  const businessIds = businesses.map(b => b.id);
+  if (!businessIds.length) {
+    offers = [];
+    $("offer-count").textContent = "0";
+    list.innerHTML = '<div class="empty">Crée d’abord une entreprise pour pouvoir enregistrer des offres.</div>';
+    return;
+  }
+  const {data,error} = await db.from("offers")
+    .select("id,business_id,offer_type,name,description,price,currency,status,availability,created_at")
+    .in("business_id",businessIds)
+    .order("created_at",{ascending:false});
+
+  if (error) {
+    list.textContent = "Impossible de charger les offres : "+error.message;
+    return;
+  }
+  offers = data || [];
+  $("offer-count").textContent = offers.length;
+  renderOffers();
+}
+function renderOffers() {
+  const list = $("offer-list");
+  if (!offers.length) {
+    list.innerHTML = '<div class="empty">Aucune offre enregistrée pour le moment.</div>';
+    return;
+  }
+  list.innerHTML = offers.map(o => {
+    const company = businesses.find(b => b.id === o.business_id);
+    const price = o.price === null ? "Prix à préciser" :
+      Number(o.price).toLocaleString("fr-FR")+" "+(o.currency || "CDF");
+    return `<div class="data-item">
+      <div><strong>${escapeHTML(o.name)}</strong>
+      <div class="small-note">${o.offer_type === "service" ? "Service" : "Produit"} · ${escapeHTML(company?.name || "")} · ${escapeHTML(price)}</div></div>
+      <span class="pill">${escapeHTML(o.status || "draft")}</span>
+    </div>`;
+  }).join("");
+}
+$("offer-form").addEventListener("submit",async event => {
+  event.preventDefault();
+  const button = $("offer-submit");
+  button.disabled = true;
+  message("offer-message","Enregistrement de l'offre...");
+  try {
+    const businessId = $("offer-business").value;
+    if (!businesses.some(b => b.id === businessId)) {
+      throw new Error("Choisis une entreprise qui t'appartient.");
+    }
+    const rawPrice = $("offer-price").value;
+    const name = $("offer-name").value.trim();
+    const payload = {
+      business_id:businessId,
+      offer_type:$("offer-type").value,
+      name,
+      slug:slugify(name)+"-"+Math.random().toString(36).slice(2,6),
+      description:$("offer-description").value.trim(),
+      price:rawPrice === "" ? null : Number(rawPrice),
+      currency:$("offer-currency").value,
+      status:"draft",
+      availability:"available"
+    };
+    const {error} = await db.from("offers").insert(payload);
+    if (error) throw error;
+    message("offer-message","Offre enregistrée avec succès !","success");
+    $("offer-form").reset();
+    await loadOffers();
+  } catch(error) {
+    message("offer-message",error.message,"error");
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
 </body>
 </html>
