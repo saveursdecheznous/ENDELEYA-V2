@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -105,6 +104,22 @@ footer p{color:#B8C8DC}
 .upload-label{display:inline-flex;align-items:center;gap:6px;background:#EAF3FF;color:var(--blue);padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin:4px 5px 4px 0}
 .upload-label input{display:none}
 .photo-status{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* INTERFACE DE DISCUSSION ELSA */
+.elsa-intro{background:linear-gradient(115deg,#0067D9,#004A9E);color:white;padding:20px;border-radius:13px;margin-bottom:18px}
+.elsa-intro h3{margin:0 0 6px}
+.elsa-intro p{margin:0;color:#E4F1FF;font-size:14px}
+.elsa-chat-history{display:flex;flex-direction:column;gap:12px;min-height:250px;max-height:55vh;overflow-y:auto;padding:15px;background:#F4F7FC;border:1px solid var(--border);border-radius:13px;margin:18px 0}
+.elsa-message{max-width:88%;padding:12px 15px;border-radius:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.elsa-message.assistant{align-self:flex-start;background:white;border:1px solid var(--border);border-top-left-radius:4px}
+.elsa-message.user{align-self:flex-end;background:var(--blue);color:white;border-top-right-radius:4px}
+.elsa-chat-form{display:flex;gap:10px;align-items:flex-end}
+.elsa-chat-form .field{flex:1;margin:0}
+.elsa-chat-form textarea{min-height:52px;max-height:150px;resize:vertical}
+.elsa-status{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px}
+.elsa-status.error{color:var(--red)}
+.elsa-status.success{color:var(--green)}
+.elsa-disclaimer{font-size:11px;color:var(--muted);margin-top:12px}
 @media(max-width:850px){
 .grid{grid-template-columns:repeat(2,1fr)}
 .module-grid{grid-template-columns:repeat(2,1fr)}
@@ -124,6 +139,10 @@ footer p{color:#B8C8DC}
 .two-col{grid-template-columns:1fr}
 .app-top{align-items:flex-start}
 .app-top h1{font-size:21px}
+.elsa-chat-history{max-height:50vh;min-height:220px;padding:10px}
+.elsa-message{max-width:95%}
+.elsa-chat-form{flex-direction:column;align-items:stretch}
+.elsa-chat-form .btn{width:100%}
 }
 </style>
 </head>
@@ -299,7 +318,41 @@ footer p{color:#B8C8DC}
 <section id="section-revenues" class="hidden"><div class="panel"><h3>Mes revenus</h3><p class="muted">Le suivi des ventes, dépenses, recettes et résultats sera disponible ici.</p></div></section>
 <section id="section-marketing" class="hidden"><div class="panel"><h3>Marketing</h3><p class="muted">Cet espace accueillera tes campagnes, actions promotionnelles et stratégies commerciales.</p></div></section>
 <section id="section-content" class="hidden"><div class="panel"><h3>Mon contenu</h3><p class="muted">Tu pourras organiser tes idées, publications et calendriers de contenu ici.</p></div></section>
-<section id="section-elsa" class="hidden"><div class="panel"><h3>🤖 ELSA – Ton assistante intelligente</h3><p>ELSA est l'assistante entrepreneuriale d'ENDELEYA.</p><p class="muted">Le service de conversation IA sera activé après la connexion de son moteur intelligent sécurisé.</p></div></section>
+
+<!-- ELSA : INTERFACE DE CONVERSATION -->
+<section id="section-elsa" class="hidden">
+  <div class="panel">
+    <div class="elsa-intro">
+      <h3>🤖 ELSA – Ton assistante entrepreneuriale</h3>
+      <p>Une intelligence conçue pour les réalités des entrepreneurs africains, avec la RDC comme priorité.</p>
+    </div>
+
+    <div class="field">
+      <label for="elsa-business">Entreprise concernée</label>
+      <select id="elsa-business">
+        <option value="">Conseils généraux</option>
+      </select>
+      <div class="small-note">Sélectionne l'entreprise sur laquelle tu souhaites travailler.</div>
+    </div>
+
+    <div id="elsa-chat-history" class="elsa-chat-history" aria-live="polite">
+      <div class="elsa-message assistant">Bonjour ! Je suis ELSA, ton assistante entrepreneuriale. 👋
+
+Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aider à trouver des solutions concrètes adaptées à ta réalité.</div>
+    </div>
+
+    <form id="elsa-chat-form" class="elsa-chat-form">
+      <div class="field">
+        <label for="elsa-chat-input">Ton message</label>
+        <textarea id="elsa-chat-input" rows="2" maxlength="5000" placeholder="Explique-moi ce dont tu as besoin..." required></textarea>
+      </div>
+      <button class="btn btn-blue" id="elsa-send" type="submit">Envoyer</button>
+    </form>
+
+    <div id="elsa-status" class="elsa-status" role="status"></div>
+    <p class="elsa-disclaimer">ELSA peut t'aider à réfléchir et à organiser ton activité. Vérifie les informations importantes concernant les prix, les lois et les démarches officielles.</p>
+  </div>
+</section>
 
 <section id="section-profile" class="hidden">
 <div class="panel"><h3>Mon profil</h3>
@@ -327,6 +380,10 @@ const STORAGE_BUCKET="endeleya-media";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let currentUser=null,currentProfile=null,businesses=[],offers=[],authMode="signup";
+let elsaMessages=[];
+let elsaBusy=false;
+let elsaLastBusinessId=null;
+
 const $=id=>document.getElementById(id);
 
 function message(id,text,type=""){
@@ -420,10 +477,11 @@ function goToSection(name){
  $("section-title").textContent=titles[name]||"Mon espace";$("sidebar").classList.remove("mobile-open");
  if(name==="business")loadBusinesses();
  if(name==="offers"){loadBusinesses();loadOffers();}
+ if(name==="elsa")updateElsaBusinessSelect();
 }
 async function logout(){
  const {error}=await db.auth.signOut();if(error){alert("Impossible de se déconnecter : "+error.message);return;}
- currentUser=null;currentProfile=null;businesses=[];offers=[];showHome();
+ currentUser=null;currentProfile=null;businesses=[];offers=[];elsaMessages=[];showHome();
 }
 db.auth.onAuthStateChange((event,session)=>{
  if(session?.user){currentUser=session.user;if($("app").classList.contains("hidden"))setTimeout(()=>enterApp(),0);}
@@ -475,7 +533,7 @@ async function loadBusinesses(){
  const list=$("business-list");list.textContent="Chargement...";
  const {data,error}=await db.from("businesses").select("id,name,slug,description,category,province,city,whatsapp,email,status,created_at,logo_url,cover_url,gallery_urls").eq("owner_id",currentUser.id).order("created_at",{ascending:false});
  if(error){list.textContent="Impossible de charger les entreprises : "+error.message;return;}
- businesses=data||[];$("business-count").textContent=businesses.length;renderBusinesses();updateBusinessSelect();
+ businesses=data||[];$("business-count").textContent=businesses.length;renderBusinesses();updateBusinessSelect();updateElsaBusinessSelect();
 }
 function renderBusinesses(){
  const list=$("business-list");
@@ -613,6 +671,140 @@ $("offer-form").addEventListener("submit",async event=>{
  }catch(error){message("offer-message",error.message,"error");}
  finally{button.disabled=false;}
 });
+
+/* ELSA : CONNEXION AU MOTEUR IA SECURISE */
+function updateElsaBusinessSelect(){
+ const select=$("elsa-business");
+ if(!select)return;
+
+ const previous=select.value;
+ select.innerHTML="";
+
+ if(businesses.length===0){
+  select.add(new Option("Conseils généraux – aucune entreprise", ""));
+  return;
+ }
+
+ if(businesses.length>1){
+  select.add(new Option("Choisir une entreprise", ""));
+ }
+
+ businesses.forEach(b=>{
+  select.add(new Option(b.name||"Mon entreprise",b.id));
+ });
+
+ if(previous&&businesses.some(b=>b.id===previous)){
+  select.value=previous;
+ }else if(businesses.length===1){
+  select.value=businesses[0].id;
+ }
+}
+
+function renderElsaMessages(){
+ const history=$("elsa-chat-history");
+ if(!history)return;
+
+ const greeting=`<div class="elsa-message assistant">Bonjour ! Je suis ELSA, ton assistante entrepreneuriale. 👋
+
+Parle-moi de ton activité, de tes difficultés ou de tes projets. Je vais t'aider à trouver des solutions concrètes adaptées à ta réalité.</div>`;
+
+ history.innerHTML=greeting+elsaMessages.map(item=>`
+  <div class="elsa-message ${item.role==="user"?"user":"assistant"}">${escapeHTML(item.content)}</div>
+ `).join("");
+
+ history.scrollTop=history.scrollHeight;
+}
+
+function resetElsaConversation(){
+ elsaMessages=[];
+ renderElsaMessages();
+ $("elsa-status").textContent="";
+ $("elsa-status").className="elsa-status";
+}
+
+$("elsa-business").addEventListener("change",()=>{
+ const selected=$("elsa-business").value;
+ if(elsaLastBusinessId!==null&&selected!==elsaLastBusinessId){
+  resetElsaConversation();
+ }
+ elsaLastBusinessId=selected;
+});
+
+$("elsa-chat-form").addEventListener("submit",async event=>{
+ event.preventDefault();
+
+ if(elsaBusy)return;
+
+ const input=$("elsa-chat-input");
+ const button=$("elsa-send");
+ const status=$("elsa-status");
+ const businessSelect=$("elsa-business");
+ const userMessage=input.value.trim();
+
+ if(!userMessage)return;
+
+ if(businesses.length>1&&!businessSelect.value){
+  status.textContent="Choisis d'abord l'entreprise concernée.";
+  status.className="elsa-status error";
+  businessSelect.focus();
+  return;
+ }
+
+ if(!currentUser){
+  status.textContent="Reconnecte-toi à ton compte pour utiliser ELSA.";
+  status.className="elsa-status error";
+  return;
+ }
+
+ elsaMessages.push({role:"user",content:userMessage});
+ elsaMessages=elsaMessages.slice(-20);
+
+ input.value="";
+ elsaBusy=true;
+ button.disabled=true;
+ button.textContent="ELSA réfléchit...";
+ status.textContent="ELSA prépare sa réponse...";
+ status.className="elsa-status";
+
+ renderElsaMessages();
+
+ try{
+  const {data,error}=await db.functions.invoke("elsa-chat",{
+   body:{
+    messages:elsaMessages.slice(-20),
+    businessId:businessSelect.value||null
+   }
+  });
+
+  if(error)throw error;
+
+  if(!data||!data.answer){
+   throw new Error(data?.error||"ELSA n'a pas renvoyé de réponse.");
+  }
+
+  elsaMessages.push({role:"assistant",content:data.answer});
+  elsaMessages=elsaMessages.slice(-20);
+
+  renderElsaMessages();
+  status.textContent="ELSA est prête à poursuivre la conversation.";
+  status.className="elsa-status success";
+
+ }catch(error){
+  console.error("Erreur ELSA :",error);
+  status.textContent="Impossible de joindre ELSA. Vérifie ta connexion ou réessaie dans quelques instants.";
+  status.className="elsa-status error";
+ }finally{
+  elsaBusy=false;
+  button.disabled=false;
+  button.textContent="Envoyer";
+  input.focus();
+ }
+});
+
+/* INITIALISATION ELSA */
+updateElsaBusinessSelect();
+renderElsaMessages();
+
 </script>
 </body>
 </html>
