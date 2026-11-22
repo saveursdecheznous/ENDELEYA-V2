@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#007FFF">
+<title>ENDELEYA — Avance. Développe. Réussis.</title>
+<style>
+:root {
+  --blue:#007FFF;
+  --red:#CE1021;
+  --yellow:#F7D116;
+  --dark:#14243A;
+  --muted:#64748b;
+  --light:#f4f8fd;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,sans-serif;color:var(--dark);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+button{font:inherit;cursor:pointer}
+header{
+  position:sticky;top:0;z-index:20;background:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 6%;box-shadow:0 2px 14px #102b4b12
+}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px;color:var(--blue)}
+.logo span{color:var(--red)}
+nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600}
+nav a:hover{color:var(--blue)}
+.btn{
+  display:inline-block;border:0;border-radius:9px;padding:12px 19px;
+  background:var(--blue);color:white;font-weight:700
+}
+.btn:hover{opacity:.9}
+.btn-red{background:var(--red)}
+.btn-light{background:white;color:var(--blue);border:1px solid #dce8f5}
+.menu{display:none;background:none;border:0;font-size:25px}
+.hero{
+  min-height:520px;padding:85px 7%;display:flex;align-items:center;
+  color:white;position:relative;overflow:hidden;
+  background:linear-gradient(110deg,#061c39ed,#007fff9c),
+  url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1800&q=85') center/cover
+}
+.hero-content{max-width:720px;position:relative;z-index:1}
+.eyebrow{color:var(--yellow);font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:13px}
+.hero h1{font-size:clamp(36px,6vw,64px);line-height:1.12;margin:18px 0}
+.hero p{font-size:18px;max-width:610px;color:#eef5ff;margin-bottom:27px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero .btn-light{border:0}
+.flag{display:flex;gap:5px;margin-top:35px}
+.flag i{height:5px;width:35px;border-radius:8px;background:var(--blue)}
+.flag i:nth-child(2){background:var(--yellow)}
+.flag i:nth-child(3){background:var(--red)}
+section{padding:72px 7%}
+.section-head{text-align:center;max-width:720px;margin:0 auto 38px}
+.section-head h2{font-size:32px;margin-bottom:10px}
+.section-head p{color:var(--muted)}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature{
+  padding:26px;border:1px solid #e7edf5;border-radius:16px;
+  background:white;box-shadow:0 8px 25px #0d31500a
+}
+.feature .symbol{font-size:30px;margin-bottom:13px}
+.feature h3{font-size:19px;margin-bottom:8px}
+.feature p{font-size:14px;color:var(--muted)}
+.soft{background:var(--light)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:45px;align-items:center}
+.split h2{font-size:34px;line-height:1.2;margin-bottom:16px}
+.split p{color:var(--muted);margin-bottom:18px}
+.photo{
+  min-height:320px;border-radius:20px;
+  background:linear-gradient(140deg,#007fff30,#ce102150),
+  url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85') center/cover
+}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step{background:white;padding:25px;border-radius:15px}
+.number{font-size:28px;font-weight:900;color:var(--red)}
+.step p{color:var(--muted);font-size:14px;margin-top:8px}
+.elsa{
+  background:linear-gradient(120deg,#06264a,#007fff);
+  color:white;border-radius:22px;padding:40px
+}
+.elsa p{color:#e5f1ff;margin:12px 0 22px}
+.cta{text-align:center;background:#fff7dc}
+.cta h2{font-size:32px;margin-bottom:12px}
+.cta p{color:var(--muted);margin-bottom:22px}
+footer{background:#10243d;color:#dce8f5;padding:45px 7% 22px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+footer h3,footer h4{color:white;margin-bottom:12px}
+footer p,footer a{font-size:14px;color:#c3d2e4}
+footer a{display:block;margin:7px 0}
+footer a:hover{color:var(--yellow)}
+.copyright{border-top:1px solid #ffffff20;margin-top:30px;padding-top:18px;font-size:12px}
+.page{display:none;min-height:65vh;padding:65px 7%}
+.page.active{display:block}
+.page h1{font-size:34px;margin-bottom:18px}
+.page p{color:var(--muted);max-width:800px;margin-bottom:15px}
+.faq-item{padding:18px 0;border-bottom:1px solid #e5edf5}
+.faq-item h3{font-size:17px;margin-bottom:7px}
+@media(max-width:760px){
+  header{padding:12px 5%}
+  nav{display:none;position:absolute;top:62px;left:0;right:0;background:white;padding:20px;flex-direction:column;align-items:stretch;box-shadow:0 8px 15px #0001}
+  nav.open{display:flex}
+  .menu{display:block}
+  .header-cta{display:none}
+  .hero{min-height:520px;padding:65px 6%}
+  .hero p{font-size:16px}
+  section{padding:55px 6%}
+  .features,.steps,.split,.footer-grid{grid-template-columns:1fr}
+  .section-head h2,.split h2,.cta h2{font-size:27px}
+  .photo{min-height:240px}
+  .elsa{padding:28px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo" onclick="showPage('home')">ENDELE<span>YA</span></a>
+  <button class="menu" onclick="toggleMenu()" aria-label="Ouvrir le menu">☰</button>
+  <nav id="nav">
+    <a href="#accueil" onclick="showPage('home')">Accueil</a>
+    <a href="#fonctionnalites" onclick="showPage('home')">Fonctionnalités</a>
+    <a href="#comment" onclick="showPage('home')">Comment ça marche</a>
+    <a href="#apropos" onclick="showPage('about')">À propos</a>
+    <a href="#faq" onclick="showPage('faq')">FAQ</a>
+  </nav>
+  <a class="btn header-cta" href="#inscription">Commencer</a>
+</header>
+
+<main id="home">
+<section class="hero" id="accueil">
+  <div class="hero-content">
+    <div class="eyebrow">L'entrepreneuriat congolais à portée de main</div>
+    <h1>Ton activité mérite de grandir.</h1>
+    <p>Présente ton entreprise, trouve des clients, organise ton activité et développe tes revenus avec une plateforme pensée pour les entrepreneurs d'ici.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#inscription">Créer mon espace</a>
+      <a class="btn btn-light" href="#fonctionnalites">Découvrir ENDELEYA</a>
+    </div>
+    <div class="flag"><i></i><i></i><i></i></div>
+  </div>
+</section>
+
+<section id="fonctionnalites">
+  <div class="section-head">
+    <div class="eyebrow" style="color:#007FFF">Une plateforme, plusieurs possibilités</div>
+    <h2>Tout pour faire avancer ton business</h2>
+    <p>ENDELEYA réunit les outils essentiels pour rendre ton activité plus visible, mieux organisée et plus performante.</p>
+  </div>
+  <div class="features">
+    <article class="feature">
+      <div class="symbol">🏪</div>
+      <h3>Ta vitrine professionnelle</h3>
+      <p>Présente ton entreprise, tes produits et tes services sur une page que tu peux partager avec tes clients.</p>
+    </article>
+    <article class="feature">
+      <div class="symbol">📊</div>
+      <h3>Gestion de ton activité</h3>
+      <p>Organise tes ventes, tes dépenses, tes clients, tes commandes et ton stock au même endroit.</p>
+    </article>
+    <article class="feature">
+      <div class="symbol">🤖</div>
+      <h3>ELSA, ton assistante intelligente</h3>
+      <p>Prépare tes contenus, trouve des idées, analyse tes besoins et accompagne tes décisions.</p>
+    </article>
+    <article class="feature">
+      <div class="symbol">📣</div>
+      <h3>Marketing et visibilité</h3>
+      <p>Prépare tes campagnes, planifie tes publications et valorise tes offres.</p>
+    </article>
+    <article class="feature">
+      <div class="symbol">💰</div>
+      <h3>Suivi des revenus</h3>
+      <p>Comprends tes entrées et sorties d'argent pour mieux piloter ton entreprise.</p>
+    </article>
+    <article class="feature">
+      <div class="symbol">🌍</div>
+      <h3>Découverte des entreprises</h3>
+      <p>Explore les activités, les produits et les services proposés par les entrepreneurs.</p>
+    </article>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="split">
+    <div>
+      <div class="eyebrow" style="color:#007FFF">Vitrine ya Mboka</div>
+      <h2>Fais connaître ton activité au-delà de ton quartier.</h2>
+      <p>Crée une présence professionnelle en ligne. Montre ce que tu proposes, ajoute tes coordonnées et facilite le contact avec tes futurs clients.</p>
+      <a class="btn" href="#inscription">Présenter mon entreprise</a>
+    </div>
+    <div class="photo" role="img" aria-label="Paysage naturel africain"></div>
+  </div>
+</section>
+
+<section id="comment">
+  <div class="section-head">
+    <h2>Commencer est simple</h2>
+    <p>Quelques étapes pour donner une nouvelle dimension à ton activité.</p>
+  </div>
+  <div class="steps">
+    <article class="step">
+      <div class="number">01</div>
+      <h3>Crée ton compte</h3>
+      <p>Inscris-toi et renseigne les informations essentielles de ton profil.</p>
+    </article>
+    <article class="step">
+      <div class="number">02</div>
+      <h3>Présente ton business</h3>
+      <p>Ajoute ton entreprise, tes produits ou tes services et tes coordonnées.</p>
+    </article>
+    <article class="step">
+      <div class="number">03</div>
+      <h3>Développe ton activité</h3>
+      <p>Utilise les outils de gestion et l'accompagnement d'ELSA pour avancer.</p>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="elsa">
+    <div class="eyebrow">Ton copilote intelligent</div>
+    <h2>Découvre ELSA</h2>
+    <p>Une assistante intelligente intégrée à ENDELEYA pour t'aider à réfléchir, créer, organiser et prendre de meilleures décisions pour ton activité.</p>
+    <a class="btn btn-light" href="#inscription">Découvrir ENDELEYA</a>
+  </div>
+</section>
+
+<section class="cta" id="inscription">
+  <h2>Ton prochain pas commence ici.</h2>
+  <p>Rejoins ENDELEYA et prépare ton entreprise à de nouvelles possibilités.</p>
+  <button class="btn btn-red" onclick="alert('La création de compte sera activée lors de la connexion à Supabase.')">Créer mon compte</button>
+</section>
+</main>
+
+<section class="page" id="about">
+  <div class="eyebrow" style="color:#007FFF">Notre vision</div>
+  <h1>À propos d'ENDELEYA</h1>
+  <p>ENDELEYA est une plateforme conçue pour accompagner les entrepreneurs dans la présentation, l'organisation et le développement de leurs activités.</p>
+  <p>Notre ambition est de rendre les outils numériques plus accessibles aux entrepreneurs congolais et africains, quels que soient leur secteur et la taille de leur entreprise.</p>
+  <p>Nous réunissons une vitrine professionnelle, des outils de gestion et un assistant intelligent dans un même espace.</p>
+  <h2>Notre engagement</h2>
+  <p>Donner aux entrepreneurs les moyens de mieux présenter leur travail, de mieux gérer leurs activités et de saisir de nouvelles opportunités.</p>
+  <h2>Notre devise</h2>
+  <p><strong>Avance. Développe. Réussis.</strong></p>
+</section>
+
+<section class="page" id="faq">
+  <div class="eyebrow" style="color:#007FFF">Besoin d'aide ?</div>
+  <h1>Questions fréquentes</h1>
+  <div class="faq-item">
+    <h3>Qu'est-ce qu'ENDELEYA ?</h3>
+    <p>Une plateforme qui aide les entrepreneurs à présenter, organiser et développer leur activité.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Qui peut utiliser ENDELEYA ?</h3>
+    <p>Les commerçants, artisans, prestataires de services, producteurs et autres entrepreneurs.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Puis-je présenter plusieurs entreprises ?</h3>
+    <p>La plateforme est conçue pour permettre à un compte de gérer plusieurs activités, selon les limites de son abonnement.</p>
+  </div>
+  <div class="faq-item">
+    <h3>ELSA est-elle intégrée à ENDELEYA ?</h3>
+    <p>Oui. ELSA est l'assistante intelligente prévue pour accompagner les utilisateurs dans leurs activités.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Comment contacter une entreprise ?</h3>
+    <p>Les vitrines professionnelles pourront afficher les coordonnées et les moyens de contact renseignés par chaque entreprise.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <h3 class="logo" style="color:white">ENDELE<span>YA</span></h3>
+      <p>La plateforme qui accompagne les entrepreneurs vers de nouvelles possibilités.</p>
+      <p style="margin-top:12px;color:#F7D116;font-weight:bold">Avance. Développe. Réussis.</p>
+    </div>
+    <div>
+      <h4>Explorer</h4>
+      <a href="#fonctionnalites" onclick="showPage('home')">Fonctionnalités</a>
+      <a href="#comment" onclick="showPage('home')">Comment ça marche</a>
+      <a href="#inscription" onclick="showPage('home')">Créer un compte</a>
+    </div>
+    <div>
+      <h4>Informations</h4>
+      <a href="#apropos" onclick="showPage('about')">À propos de nous</a>
+      <a href="#faq" onclick="showPage('faq')">FAQ</a>
+    </div>
+  </div>
+  <div class="copyright">© 2026 ENDELEYA. Tous droits réservés.</div>
+</footer>
+
+<script>
+function toggleMenu(){
+  document.getElementById('nav').classList.toggle('open');
+}
+function showPage(page){
+  document.getElementById('home').style.display=page==='home'?'block':'none';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(page!=='home'){
+    document.getElementById(page).classList.add('active');
+    window.scrollTo(0,0);
+  }
+  document.getElementById('nav').classList.remove('open');
+}
+</script>
+</body>
+</html>
