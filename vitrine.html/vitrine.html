@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#007FFF">
+<title>Vitrine | ENDELEYA</title>
+<meta name="description" content="Découvrez cette entreprise sur ENDELEYA.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--blue:#007FFF;--red:#CE1021;--yellow:#F7D116;--dark:#14243A;--muted:#68778B;--bg:#F4F7FC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--dark);font-family:Arial,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.container{width:min(1050px,92%);margin:auto}
+.top{background:white;border-bottom:1px solid #e5eaf1;padding:17px 0}
+.logo{font-size:24px;font-weight:900;color:var(--blue)}
+.logo span{color:var(--red)}
+.flag{height:6px;background:linear-gradient(90deg,var(--blue) 33%,var(--yellow) 33% 66%,var(--red) 66%)}
+.hero{background:#10233c;color:white;padding:45px 0}
+.cover{width:100%;height:300px;object-fit:cover;border-radius:16px;margin-bottom:22px;background:#263e5c}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.15;margin:0 0 10px}
+.muted{color:var(--muted)}
+.hero .muted{color:#d8e5f5}
+.logo-img{width:95px;height:95px;border-radius:16px;object-fit:cover;background:white;border:3px solid white;margin-bottom:14px}
+.btn{display:inline-block;padding:12px 19px;border-radius:10px;font-weight:700;background:#18a058;color:white;margin:8px 8px 0 0}
+.section{padding:38px 0}
+h2{margin:0 0 20px;font-size:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.card{background:white;border:1px solid #e5eaf1;border-radius:15px;overflow:hidden}
+.card img{width:100%;height:190px;object-fit:cover;background:#eaf0f7}
+.card-body{padding:17px}
+.card h3{margin:0 0 7px}
+.price{font-size:19px;font-weight:800;color:var(--blue);margin:12px 0}
+.empty,.error{background:white;padding:22px;border-radius:12px}
+.error{color:var(--red)}
+footer{background:#10233c;color:white;padding:25px 0;margin-top:30px}
+@media(max-width:600px){.cover{height:210px}.hero{padding:30px 0}.section{padding:28px 0}}
+</style>
+</head>
+<body>
+<div class="flag"></div>
+<header class="top"><div class="container"><a class="logo" href="/">ENDELE<span>YA</span></a></div></header>
+<div id="content"><section class="hero"><div class="container">Chargement de la vitrine...</div></section></div>
+<footer><div class="container">Une vitrine professionnelle propulsée par <strong>ENDELEYA</strong> · Avance. Développe. Réussis.</div></footer>
+
+<script>
+const SUPABASE_URL="https://omwdabkrnkpyxhsohtol.supabase.co";
+const SUPABASE_KEY="sb_publishable_G0cficld3B6oVyeE6_rSLQ_MG-fpXZG";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+function esc(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+function phoneDigits(value){return String(value||"").replace(/\D/g,"");}
+function priceText(offer){
+ if(offer.price===null||offer.price===undefined||offer.price==="")return "Prix sur demande";
+ return Number(offer.price).toLocaleString("fr-FR")+" "+(offer.currency||"CDF");
+}
+function whatsappLink(phone,offerName){
+ const number=phoneDigits(phone);
+ if(!number)return "";
+ const text="Bonjour, je viens de découvrir votre vitrine sur ENDELEYA. Je suis intéressé(e) par : "+offerName+". Pouvez-vous me donner plus d'informations ?";
+ return "https://wa.me/"+number+"?text="+encodeURIComponent(text);
+}
+async function loadVitrine(){
+ const slug=decodeURIComponent(location.pathname.split("/").filter(Boolean).pop()||new URLSearchParams(location.search).get("slug")||"");
+ const root=document.getElementById("content");
+ if(!slug){root.innerHTML='<section class="section container"><div class="error">Adresse de vitrine invalide.</div></section>';return;}
+
+ const {data:business,error}=await db.from("businesses")
+  .select("id,name,slug,description,category,province,city,whatsapp,email,address,logo_url,cover_url,gallery_urls,status")
+  .eq("slug",slug).eq("status","published").maybeSingle();
+
+ if(error||!business){
+  root.innerHTML='<section class="section container"><div class="error"><h2>Vitrine introuvable</h2><p>Cette entreprise n’a pas encore publié sa vitrine ou le lien est incorrect.</p><a class="btn" href="/">Retour à ENDELEYA</a></div></section>';
+  return;
+ }
+
+ const {data:offers,error:offersError}=await db.from("offers")
+  .select("id,name,description,offer_type,price,currency,image_url,gallery_urls,availability,status")
+  .eq("business_id",business.id).eq("status","published").order("created_at",{ascending:false});
+
+ const gallery=Array.isArray(business.gallery_urls)?business.gallery_urls:[];
+ const locationText=[business.city,business.province].filter(Boolean).map(esc).join(", ");
+ const contact=business.whatsapp?'<a class="btn" target="_blank" rel="noopener" href="'+esc(whatsappLink(business.whatsapp,"une demande concernant votre entreprise"))+'">Contacter sur WhatsApp</a>':"";
+ let html='<section class="hero"><div class="container">';
+ if(business.cover_url)html+='<img class="cover" src="'+esc(business.cover_url)+'" alt="Couverture de '+esc(business.name)+'">';
+ if(business.logo_url)html+='<img class="logo-img" src="'+esc(business.logo_url)+'" alt="Logo de '+esc(business.name)+'">';
+ html+='<h1>'+esc(business.name)+'</h1>';
+ html+='<p class="muted">'+esc(business.category||"Entreprise")+(locationText?" · "+locationText:"")+'</p>';
+ html+='<p>'+esc(business.description||"Bienvenue sur notre vitrine ENDELEYA.")+'</p>'+contact;
+ if(business.email)html+='<a class="btn" style="background:#007FFF" href="mailto:'+esc(business.email)+'">Envoyer un e-mail</a>';
+ if(business.address)html+='<p class="muted">Adresse : '+esc(business.address)+'</p>';
+ html+='</div></section>';
+
+ if(gallery.length){
+  html+='<section class="section container"><h2>Notre galerie</h2><div class="grid">';
+  gallery.forEach(url=>{html+='<div class="card"><img src="'+esc(url)+'" alt="Photo de '+esc(business.name)+'" loading="lazy"></div>';});
+  html+='</div></section>';
+ }
+
+ html+='<section class="section container"><h2>Nos produits et services</h2>';
+ if(offersError){
+  html+='<div class="error">Les offres ne peuvent pas être chargées pour le moment.</div>';
+ }else if(!offers||!offers.length){
+  html+='<div class="empty">Cette entreprise prépare actuellement ses offres. Revenez bientôt !</div>';
+ }else{
+  html+='<div class="grid">';
+  offers.forEach(offer=>{
+   html+='<article class="card">';
+   if(offer.image_url)html+='<img src="'+esc(offer.image_url)+'" alt="'+esc(offer.name)+'" loading="lazy">';
+   html+='<div class="card-body"><h3>'+esc(offer.name)+'</h3>';
+   html+='<p class="muted">'+esc(offer.offer_type==="service"?"Service":"Produit")+'</p>';
+   html+='<p>'+esc(offer.description||"")+'</p>';
+   html+='<div class="price">'+esc(priceText(offer))+'</div>';
+   if(offer.availability)html+='<p class="muted">Disponibilité : '+esc(offer.availability)+'</p>';
+   const link=whatsappLink(business.whatsapp,offer.name);
+   if(link)html+='<a class="btn" target="_blank" rel="noopener" href="'+esc(link)+'">Commander / demander un devis</a>';
+   html+='</div></article>';
+  });
+  html+='</div>';
+ }
+ html+='</section>';
+ root.innerHTML=html;
+ document.title=business.name+" | ENDELEYA";
+}
+loadVitrine().catch(error=>{
+ document.getElementById("content").innerHTML='<section class="section container"><div class="error">Une erreur est survenue lors du chargement de cette vitrine. Réessaie plus tard.</div></section>';
+ console.error(error);
+});
+</script>
+</body>
+</html>
